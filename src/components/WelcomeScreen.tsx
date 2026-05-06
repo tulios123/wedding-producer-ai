@@ -1,0 +1,288 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { motion } from "framer-motion";
+import { ArrowUp } from "lucide-react";
+import type { Profile, Slot, UpdateTag, Message } from "@/types";
+
+function renderMessage(content: string): string {
+  return content
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/\n/g, "<br/>");
+}
+
+interface WelcomeScreenProps {
+  messages: Message[];
+  setMessages: (value: Message[] | ((prev: Message[]) => Message[])) => void;
+  onUpdate: (update: UpdateTag) => void;
+  onNavigate: (screen: "dashboard") => void;
+  profile: Profile;
+  slots: Slot[];
+}
+
+export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavigate, profile, slots }: WelcomeScreenProps) {
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const hasMessages = messages.some((m) => m.role === "user");
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
+
+  async function sendMessage() {
+    const text = inputValue.trim();
+    if (!text || isLoading) return;
+
+    const userMessage: Message = { role: "user", content: text };
+    const nextMessages = [...messages, userMessage];
+
+    setMessages(nextMessages);
+    setInputValue("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages, profile, slots }),
+      });
+      const data = await res.json();
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      for (const update of data.updates ?? []) {
+        if (update.type === "navigation") {
+          if (update.action === "go_to_dashboard") onNavigate("dashboard");
+        } else {
+          onUpdate(update);
+        }
+      }
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "אירעה שגיאה, נסה שוב" },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 overflow-y-auto"
+      style={{ backgroundColor: "#0F0A1A", direction: "rtl" }}
+    >
+      {/* Ambient glow */}
+      <div
+        style={{
+          position: "fixed",
+          top: "35%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "700px",
+          height: "700px",
+          background: "radial-gradient(circle, rgba(232,168,124,0.10) 0%, transparent 65%)",
+          pointerEvents: "none",
+          zIndex: 0,
+        }}
+      />
+
+      {/* Content column */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          maxWidth: "600px",
+          margin: "0 auto",
+          padding: "28vh 20px 80px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {/* Hero text */}
+        <motion.div
+          style={{ textAlign: "center", width: "100%", marginBottom: "32px" }}
+          animate={{
+            opacity: hasMessages ? 0.3 : 1,
+            y: hasMessages ? -20 : 0,
+          }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+        >
+          <h1
+            style={{
+              fontSize: "clamp(32px, 6vw, 48px)",
+              fontWeight: "400",
+              color: "#F5F0E8",
+              lineHeight: 1.15,
+              marginBottom: "12px",
+              fontFamily: "'DM Serif Display', serif",
+            }}
+          >
+            תכננו את החתונה שלכם
+          </h1>
+          <p style={{ color: "#7A7280", fontSize: "18px", lineHeight: 1.5, margin: 0 }}>
+            המפיק שלכם כאן לעזור — שאלו הכל
+          </p>
+        </motion.div>
+
+        {/* Input box */}
+        <div
+          style={{
+            width: "100%",
+            backgroundColor: "#1A1428",
+            border: "1px solid rgba(255,255,255,0.09)",
+            borderRadius: "16px",
+            padding: "14px 14px 14px 20px",
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <input
+            ref={inputRef}
+            className="flex-1 bg-transparent outline-none"
+            style={{
+              color: "#F5F0E8",
+              fontSize: "15px",
+              direction: "rtl",
+              fontFamily: "inherit",
+            }}
+            placeholder="ספרו לי עליכם — מי אתם ומתי החתונה."
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+              }
+            }}
+          />
+          <button
+            onClick={sendMessage}
+            style={{
+              width: "38px",
+              height: "38px",
+              borderRadius: "50%",
+              backgroundColor: isLoading ? "rgba(232,168,124,0.4)" : "#E8A87C",
+              border: "none",
+              cursor: isLoading ? "not-allowed" : "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+              transition: "background-color 0.2s",
+            }}
+          >
+            <ArrowUp size={16} style={{ color: "#1A1428" }} />
+          </button>
+        </div>
+
+        {/* Skip link */}
+        <button
+          onClick={() => onNavigate("dashboard")}
+          style={{
+            marginTop: "14px",
+            color: "#6B6478",
+            fontSize: "13px",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            textDecoration: "underline",
+            textUnderlineOffset: "3px",
+          }}
+        >
+          כבר יש לי נתונים — עבור לדשבורד
+        </button>
+
+        {/* Conversation */}
+        {hasMessages && (
+          <div
+            style={{
+              width: "100%",
+              marginTop: "28px",
+              maxHeight: "50vh",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
+              gap: "11px",
+            }}
+          >
+            {messages.map((msg, i) =>
+              msg.role === "assistant" ? (
+                <div key={i} style={{ alignSelf: "flex-start", maxWidth: "84%" }}>
+                  <div
+                    style={{
+                      backgroundColor: "#1A1428",
+                      borderRadius: "16px 16px 4px 16px",
+                      padding: "11px 14px",
+                      color: "#F5F0E8",
+                      fontSize: "14px",
+                      lineHeight: 1.6,
+                    }}
+                    dangerouslySetInnerHTML={{ __html: renderMessage(msg.content) }}
+                  />
+                </div>
+              ) : (
+                <div key={i} style={{ alignSelf: "flex-end", maxWidth: "84%" }}>
+                  <div
+                    style={{
+                      backgroundColor: "rgba(232,168,124,0.10)",
+                      border: "1px solid rgba(232,168,124,0.22)",
+                      borderRadius: "16px 16px 16px 4px",
+                      padding: "11px 14px",
+                      color: "#F5F0E8",
+                      fontSize: "14px",
+                      lineHeight: 1.6,
+                    }}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              )
+            )}
+
+            {isLoading && (
+              <div style={{ alignSelf: "flex-start" }}>
+                <div
+                  style={{
+                    backgroundColor: "#1A1428",
+                    borderRadius: "16px 16px 4px 16px",
+                    padding: "14px 16px",
+                    display: "flex",
+                    gap: "4px",
+                    alignItems: "center",
+                  }}
+                >
+                  {[0, 150, 300].map((delay) => (
+                    <span
+                      key={delay}
+                      style={{
+                        display: "inline-block",
+                        width: "6px",
+                        height: "6px",
+                        borderRadius: "50%",
+                        backgroundColor: "#E8A87C",
+                        animation: "dotPulse 1s ease-in-out infinite",
+                        animationDelay: `${delay}ms`,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div ref={messagesEndRef} />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

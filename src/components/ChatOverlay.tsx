@@ -3,25 +3,18 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUp } from "lucide-react";
-import { usePersistedState } from "@/hooks/usePersistedState";
-import type { Profile, Slot, UpdateTag } from "@/types";
-
-interface Message {
-  role: "user" | "assistant";
-  content: string;
-}
-
-const INITIAL_MESSAGE: Message = {
-  role: "assistant",
-  content: "שלום! אני המפיק שלכם. ספרו לי - מי אתם ומתי החתונה?",
-};
+import type { Profile, Slot, UpdateTag, Message } from "@/types";
 
 interface ChatOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   onUpdate: (update: UpdateTag) => void;
+  onNavigate?: (screen: 'dashboard') => void;
+  messages: Message[];
+  setMessages: (value: Message[] | ((prev: Message[]) => Message[])) => void;
   profile: Profile;
   slots: Slot[];
+  mode?: 'welcome' | 'overlay';
 }
 
 function renderMessage(content: string): string {
@@ -31,8 +24,7 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onUpdate, profile, slots }: ChatOverlayProps) {
-  const [messages, setMessages] = usePersistedState<Message[]>("chatHistory", [INITIAL_MESSAGE]);
+export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay' }: ChatOverlayProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -67,7 +59,11 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, profile, slots 
       console.log("[chat] data.updates received:", data.updates);
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
       for (const update of (data.updates ?? [])) {
-        onUpdate(update);
+        if (update.type === "navigation") {
+          if (update.action === "go_to_dashboard") onNavigate?.("dashboard");
+        } else {
+          onUpdate(update);
+        }
       }
     } catch {
       setMessages((prev) => [
@@ -85,9 +81,9 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, profile, slots 
         <motion.div
           className="fixed inset-0 z-50 flex flex-col"
           style={{ backgroundColor: "#0F0A1A" }}
-          initial={{ y: "100%" }}
+          initial={{ y: mode === 'welcome' ? 0 : "100%" }}
           animate={{ y: 0 }}
-          exit={{ y: "100%" }}
+          exit={{ y: mode === 'welcome' ? 0 : "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
           {/* Header */}
@@ -98,19 +94,38 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, profile, slots 
               borderBottom: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            <button
-              onClick={onClose}
-              className="flex items-center justify-center rounded-full flex-shrink-0"
-              style={{
-                width: "32px",
-                height: "32px",
-                backgroundColor: "rgba(255,255,255,0.08)",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              <ChevronDown size={18} style={{ color: "#F5F0E8" }} />
-            </button>
+            {mode === 'welcome' ? (
+              <button
+                onClick={() => onNavigate?.("dashboard")}
+                className="flex items-center justify-center rounded-full flex-shrink-0"
+                style={{
+                  height: "32px",
+                  padding: "0 12px",
+                  backgroundColor: "rgba(255,255,255,0.06)",
+                  border: "1px solid rgba(255,255,255,0.12)",
+                  cursor: "pointer",
+                  color: "#B8B0A8",
+                  fontSize: "12px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                עבור לדשבורד
+              </button>
+            ) : (
+              <button
+                onClick={onClose}
+                className="flex items-center justify-center rounded-full flex-shrink-0"
+                style={{
+                  width: "32px",
+                  height: "32px",
+                  backgroundColor: "rgba(255,255,255,0.08)",
+                  border: "none",
+                  cursor: "pointer",
+                }}
+              >
+                <ChevronDown size={18} style={{ color: "#F5F0E8" }} />
+              </button>
+            )}
 
             <div className="flex flex-col flex-1 items-center">
               <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "14px" }}>

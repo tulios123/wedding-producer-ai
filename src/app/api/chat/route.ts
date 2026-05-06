@@ -24,6 +24,8 @@ const STATUS_LABELS: Record<SlotStatus, string> = {
 };
 
 function buildSystemPrompt(profile: Profile, slots: Slot[]): string {
+  const currentYear = new Date().getFullYear();
+  const nextYear = currentYear + 1;
   const couple =
     profile.partner1 && profile.partner2
       ? `${profile.partner1} ו-${profile.partner2}`
@@ -49,9 +51,13 @@ function buildSystemPrompt(profile: Profile, slots: Slot[]): string {
 לעדכון פרטי החתונה:
 [UPDATE:{"type":"profile","field":"FIELD","value":"VALUE"}]
 
-שדות אפשריים: partner1 (שם בן/בת הזוג הראשון), partner2 (שם בן/בת הזוג השני), weddingDate (YYYY-MM-DD), guestCount (מספר שלם), budget (מספר שלם בש"ח), style (מחרוזת), location (מחרוזת), ceremonyType (rabbinate/reform/civil/destination)
+שדות אפשריים: partner1 (שם בן/בת הזוג הראשון), partner2 (שם בן/בת הזוג השני), weddingDate (ראה פורמטים מותרים למטה), guestCount (מספר שלם), budget (מספר שלם בש"ח), style (מחרוזת), location (מחרוזת), ceremonyType (rabbinate/reform/civil/destination)
 
-חשוב לגבי weddingDate: אם המשתמש ציין חודש בלבד (למשל "ספטמבר"), קבע את התאריך הראשון של אותו חודש בשנה הקרובה שעדיין לא עברה. אם החודש כבר עבר השנה — השתמש בשנה הבאה. לעולם אל תכתוב תאריך שכבר עבר.
+כללים לגבי weddingDate — חשוב מאוד:
+- תאריך מלא וספציפי → שמור בפורמט YYYY-MM-DD (למשל "${nextYear}-09-12")
+- חודש בלבד, ללא שנה → שאל תחילה: "ספטמבר הקרוב (${currentYear}) או ${nextYear}?" — אל תניח שנה לבד. אחרי שהמשתמש מאשר, שמור כ-"ספטמבר ${nextYear}"
+- טווח חודשים → שמור כ-"ספטמבר-אוקטובר ${nextYear}"
+- לעולם אל תנחש שנה ואל תשתמש בתאריך שכבר עבר. אם יש ספק לגבי השנה — שאל.
 
 לעדכון סטטוס ספק:
 [UPDATE:{"type":"slot","slot":"SLOT_ID","status":"STATUS","vendor":"שם"}]
@@ -64,8 +70,8 @@ STATUS: idle, collecting, negotiating, hold, signed
 [UPDATE:{"type":"profile","field":"partner1","value":"נועה"}]
 [UPDATE:{"type":"profile","field":"partner2","value":"אור"}]
 
-משתמש אמר "החתונה ב-15 ביוני 2025, 120 איש, תקציב 100000" →
-[UPDATE:{"type":"profile","field":"weddingDate","value":"2025-06-15"}]
+משתמש אמר "החתונה ב-15 ביוני ${nextYear}, 120 איש, תקציב 100000" →
+[UPDATE:{"type":"profile","field":"weddingDate","value":"${nextYear}-06-15"}]
 [UPDATE:{"type":"profile","field":"guestCount","value":120}]
 [UPDATE:{"type":"profile","field":"budget","value":100000}]
 
@@ -73,6 +79,15 @@ STATUS: idle, collecting, negotiating, hold, signed
 [UPDATE:{"type":"slot","slot":"photography","status":"signed","vendor":"יובל כהן"}]
 
 חשוב: אל תדלג על תגי UPDATE כשיש מידע חדש. זה קריטי לתפקוד המערכת.
+
+---
+
+## שלב האיסוף הראשוני
+
+בתחילת השיחה אסוף את הפרטים הבסיסיים בסדר טבעי וחם — לא כמו טופס.
+כשיש לך לפחות **שמות שני בני הזוג** (partner1 ו-partner2) **ועוד פרט אחד לפחות** (תאריך / אורחים / תקציב) — שלח:
+[UPDATE:{"type":"navigation","action":"go_to_dashboard"}]
+כדי לעבור לדשבורד. המשך את השיחה שם באופן רגיל. אל תשלח תג זה לפני שיש לך שמות שני בני הזוג.
 
 ---
 
@@ -162,6 +177,12 @@ export async function POST(req: NextRequest) {
             });
           } else {
             console.warn("[chat] Invalid slot update:", parsed);
+          }
+        } else if (parsed.type === "navigation") {
+          if (parsed.action === "go_to_dashboard") {
+            updates.push({ type: "navigation", action: "go_to_dashboard" });
+          } else {
+            console.warn("[chat] Invalid navigation action:", parsed);
           }
         } else {
           console.warn("[chat] Unknown update type:", parsed);

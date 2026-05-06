@@ -17,8 +17,9 @@ import {
   LucideIcon,
 } from "lucide-react";
 import ChatOverlay from "@/components/ChatOverlay";
+import WelcomeScreen from "@/components/WelcomeScreen";
 import { usePersistedState, clearAll } from "@/hooks/usePersistedState";
-import type { Slot, Profile, UpdateTag, SlotStatus } from "@/types";
+import type { Slot, Profile, UpdateTag, SlotStatus, Message } from "@/types";
 
 const SLOT_ICONS: Record<string, LucideIcon> = {
   venue: Building2,
@@ -53,6 +54,10 @@ const PLACEHOLDER_SLOTS = [
   { id: "rabbi",  label: "רב מסדר" },
 ] as const;
 
+function isExactDate(s: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}$/.test(s);
+}
+
 function daysUntil(dateStr: string): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -66,8 +71,32 @@ function formatDate(dateStr: string): string {
   return `${d}.${m}.${y}`;
 }
 
+type DateDisplay =
+  | { kind: "countdown"; days: number; formatted: string }
+  | { kind: "past" }
+  | { kind: "freetext"; text: string }
+  | { kind: "none" };
+
+function resolveDateDisplay(weddingDate: string | undefined): DateDisplay {
+  if (!weddingDate) return { kind: "none" };
+  if (isExactDate(weddingDate)) {
+    const d = daysUntil(weddingDate);
+    return d >= 0
+      ? { kind: "countdown", days: d, formatted: formatDate(weddingDate) }
+      : { kind: "past" };
+  }
+  return { kind: "freetext", text: weddingDate };
+}
+
+const INITIAL_CHAT_MESSAGE: Message = {
+  role: "assistant",
+  content: "שלום! אני המפיק שלכם. ספרו לי - מי אתם ומתי החתונה?",
+};
+
 export default function Home() {
   const [chatOpen, setChatOpen] = useState(false);
+  const [appScreen, setAppScreen] = usePersistedState<'welcome' | 'dashboard'>('screen', 'welcome');
+  const [chatHistory, setChatHistory] = usePersistedState<Message[]>("chatHistory", [INITIAL_CHAT_MESSAGE]);
   const [profile, setProfile] = usePersistedState<Profile>("profile", {});
   const [slots, setSlots] = usePersistedState<Slot[]>("slots", INITIAL_SLOTS);
   const [toast, setToast] = useState<string | null>(null);
@@ -97,11 +126,24 @@ export default function Home() {
     }
   };
 
+  if (appScreen === 'welcome') {
+    return (
+      <WelcomeScreen
+        messages={chatHistory}
+        setMessages={setChatHistory}
+        onUpdate={handleUpdate}
+        onNavigate={() => setAppScreen('dashboard')}
+        profile={profile}
+        slots={slots}
+      />
+    );
+  }
+
   const venueSlot = slots.find((s) => s.id === "venue");
   const activeSlots = slots.filter((s) => s.id !== "venue");
   const venueCfg = statusConfig[venueSlot?.status ?? "idle"];
 
-  const days = profile.weddingDate ? daysUntil(profile.weddingDate) : null;
+  const dateDisplay = resolveDateDisplay(profile.weddingDate);
 
   const totalBudget = profile.budget ?? 0;
   const totalSpent = slots.reduce((sum, s) => sum + (s.amount ?? 0), 0);
@@ -119,6 +161,8 @@ export default function Home() {
         isOpen={chatOpen}
         onClose={() => setChatOpen(false)}
         onUpdate={handleUpdate}
+        messages={chatHistory}
+        setMessages={setChatHistory}
         profile={profile}
         slots={slots}
       />
@@ -225,11 +269,11 @@ export default function Home() {
 
                 <p style={{ color: "#7A7280", fontSize: "11px", marginBottom: "8px" }}>
                   {profile.partner1 && profile.partner2
-                    ? `${profile.partner1} & ${profile.partner2}${profile.weddingDate ? ` · ${formatDate(profile.weddingDate)}` : ""}`
-                    : "נועה & אור · ?"}
+                    ? `${profile.partner1} & ${profile.partner2}${dateDisplay.kind === "countdown" ? ` · ${dateDisplay.formatted}` : ""}`
+                    : "AI Wedding Producer"}
                 </p>
 
-                {days !== null && days >= 0 ? (
+                {dateDisplay.kind === "countdown" ? (
                   <>
                     <div className="flex flex-row items-baseline gap-2">
                       <span
@@ -242,7 +286,7 @@ export default function Home() {
                           backgroundClip: "text",
                         }}
                       >
-                        {days}
+                        {dateDisplay.days}
                       </span>
                       <span style={{ color: "#B8B0A8", fontSize: "20px" }}>ימים</span>
                     </div>
@@ -250,7 +294,25 @@ export default function Home() {
                       לחתונה שלכם
                     </p>
                   </>
-                ) : days !== null && days < 0 ? (
+                ) : dateDisplay.kind === "freetext" ? (
+                  <div style={{ marginBottom: "14px", marginTop: "8px" }}>
+                    <p
+                      className="font-extrabold leading-none"
+                      style={{
+                        fontSize: "36px",
+                        background: "linear-gradient(135deg, #F8B4A6 0%, #E89579 50%, #D4A574 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                        backgroundClip: "text",
+                      }}
+                    >
+                      {dateDisplay.text}
+                    </p>
+                    <p style={{ color: "#B8B0A8", fontSize: "14px", marginTop: "6px" }}>
+                      לחתונה שלכם
+                    </p>
+                  </div>
+                ) : dateDisplay.kind === "past" ? (
                   <div style={{ marginBottom: "14px", marginTop: "8px" }}>
                     <p style={{ color: "#E8A87C", fontSize: "22px", fontWeight: "700" }}>
                       בדוק את התאריך

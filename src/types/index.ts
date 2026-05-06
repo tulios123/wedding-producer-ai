@@ -22,6 +22,11 @@ export interface Profile {
   ceremonyType?: 'rabbinate' | 'reform' | 'civil' | 'destination';
 }
 
+export interface Message {
+  role: 'user' | 'assistant';
+  content: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
@@ -30,4 +35,5 @@ export interface ChatMessage {
 
 export type UpdateTag =
   | { type: 'profile'; field: keyof Profile; value: any }
-  | { type: 'slot'; slot: SlotId; status: SlotStatus; vendor?: string; estimate?: { min: number; max: number }; amount?: number };
+  | { type: 'slot'; slot: SlotId; status: SlotStatus; vendor?: string; estimate?: { min: number; max: number }; amount?: number }
+  | { type: 'navigation'; action: 'go_to_dashboard' };
