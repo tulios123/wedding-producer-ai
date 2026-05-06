@@ -1,58 +1,83 @@
 "use client";
 
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Camera, Heart, ArrowUp } from "lucide-react";
+import { ChevronDown, ArrowUp } from "lucide-react";
 
-interface VendorCardProps {
-  name: string;
-  desc: string;
-  price: string;
-  accentColor: string;
-  iconBg: string;
+interface Message {
+  role: "user" | "assistant";
+  content: string;
 }
 
-function VendorCard({ name, desc, price, accentColor, iconBg }: VendorCardProps) {
-  return (
-    <div
-      className="flex flex-row items-center gap-2.5 rounded-2xl cursor-pointer transition-colors"
-      style={{
-        backgroundColor: "#1A1428",
-        border: "1px solid rgba(255,255,255,0.08)",
-        padding: "11px",
-      }}
-      onMouseEnter={(e) => {
-        (e.currentTarget as HTMLDivElement).style.border = `1px solid ${accentColor}4D`;
-      }}
-      onMouseLeave={(e) => {
-        (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(255,255,255,0.08)";
-      }}
-    >
-      <div
-        className="flex items-center justify-center rounded-xl flex-shrink-0"
-        style={{ width: "46px", height: "46px", backgroundColor: iconBg }}
-      >
-        <Camera size={20} style={{ color: accentColor }} />
-      </div>
-      <div className="flex flex-col flex-1 min-w-0">
-        <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "13px" }}>
-          {name}
-        </span>
-        <span style={{ color: "#7A7280", fontSize: "11px" }}>{desc}</span>
-        <span className="font-medium" style={{ color: accentColor, fontSize: "12px" }}>
-          {price}
-        </span>
-      </div>
-      <Heart size={18} style={{ color: "#7A7280" }} className="flex-shrink-0" />
-    </div>
-  );
+const INITIAL_MESSAGE: Message = {
+  role: "assistant",
+  content: "שלום נועה! 127 ימים לחתונה. הדבר הדחוף ביותר עכשיו הוא לסגור צלם - רוצה שאציג כמה אופציות?",
+};
+
+interface SlotUpdate {
+  slot: string;
+  status: string;
+  vendor?: string;
 }
 
 interface ChatOverlayProps {
   isOpen: boolean;
   onClose: () => void;
+  onSlotUpdate: (update: SlotUpdate) => void;
 }
 
-export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
+function renderMessage(content: string): string {
+  return content
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    .replace(/\n/g, "<br/>");
+}
+
+export default function ChatOverlay({ isOpen, onClose, onSlotUpdate }: ChatOverlayProps) {
+  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+  const [inputValue, setInputValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (isOpen) inputRef.current?.focus();
+  }, [isOpen]);
+
+  async function sendMessage() {
+    const text = inputValue.trim();
+    if (!text || isLoading) return;
+
+    const userMessage: Message = { role: "user", content: text };
+    const nextMessages = [...messages, userMessage];
+
+    setMessages(nextMessages);
+    setInputValue("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages }),
+      });
+      const data = await res.json();
+      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      if (data.update) onSlotUpdate(data.update);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "אירעה שגיאה, נסה שוב" },
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -72,7 +97,6 @@ export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
               borderBottom: "1px solid rgba(255,255,255,0.08)",
             }}
           >
-            {/* Back button */}
             <button
               onClick={onClose}
               className="flex items-center justify-center rounded-full flex-shrink-0"
@@ -87,7 +111,6 @@ export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
               <ChevronDown size={18} style={{ color: "#F5F0E8" }} />
             </button>
 
-            {/* Center */}
             <div className="flex flex-col flex-1 items-center">
               <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "14px" }}>
                 מפיק החתונה
@@ -101,7 +124,6 @@ export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
               </div>
             </div>
 
-            {/* Avatar */}
             <div
               className="flex items-center justify-center rounded-full font-bold flex-shrink-0"
               style={{
@@ -121,74 +143,68 @@ export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
             className="flex-1 overflow-y-auto flex flex-col"
             style={{ padding: "14px 12px", gap: "11px", direction: "rtl" }}
           >
-            {/* Message 1 – agent */}
-            <div className="self-start" style={{ maxWidth: "84%" }}>
-              <div
-                className="text-sm leading-relaxed"
-                style={{
-                  backgroundColor: "#1A1428",
-                  borderRadius: "16px 16px 4px 16px",
-                  padding: "11px 14px",
-                  color: "#F5F0E8",
-                  whiteSpace: "pre-line",
-                }}
-              >
-                {"שלום נועה! 127 ימים לחתונה.\nזה הזמן לסגור צלם - הכי חשוב שלא להשאיר לרגע האחרון. יש לי 3 המלצות שמדויקות לסגנון שלכם."}
-              </div>
-            </div>
+            {messages.map((msg, i) =>
+              msg.role === "assistant" ? (
+                <div key={i} className="self-start" style={{ maxWidth: "84%" }}>
+                  <div
+                    className="text-sm leading-relaxed"
+                    style={{
+                      backgroundColor: "#1A1428",
+                      borderRadius: "16px 16px 4px 16px",
+                      padding: "11px 14px",
+                      color: "#F5F0E8",
+                    }}
+                    dangerouslySetInnerHTML={{ __html: renderMessage(msg.content) }}
+                  />
+                </div>
+              ) : (
+                <div key={i} className="self-end" style={{ maxWidth: "84%" }}>
+                  <div
+                    className="text-sm leading-relaxed"
+                    style={{
+                      backgroundColor: "rgba(232,168,124,0.10)",
+                      border: "1px solid rgba(232,168,124,0.22)",
+                      borderRadius: "16px 16px 16px 4px",
+                      padding: "11px 14px",
+                      color: "#F5F0E8",
+                    }}
+                  >
+                    {msg.content}
+                  </div>
+                </div>
+              )
+            )}
 
-            {/* Message 2 – user */}
-            <div className="self-end" style={{ maxWidth: "84%" }}>
-              <div
-                className="text-sm leading-relaxed"
-                style={{
-                  backgroundColor: "rgba(232,168,124,0.10)",
-                  border: "1px solid rgba(232,168,124,0.22)",
-                  borderRadius: "16px 16px 16px 4px",
-                  padding: "11px 14px",
-                  color: "#F5F0E8",
-                }}
-              >
-                אשמח לראות! ניסינו ליצור קשר עם דנה לוי אבל לא ענתה
+            {/* Typing indicator */}
+            {isLoading && (
+              <div className="self-start" style={{ maxWidth: "84%" }}>
+                <div
+                  className="flex flex-row items-center gap-1"
+                  style={{
+                    backgroundColor: "#1A1428",
+                    borderRadius: "16px 16px 4px 16px",
+                    padding: "14px 16px",
+                  }}
+                >
+                  {[0, 150, 300].map((delay) => (
+                    <span
+                      key={delay}
+                      style={{
+                        display: "inline-block",
+                        width: "6px",
+                        height: "6px",
+                        borderRadius: "50%",
+                        backgroundColor: "#E8A87C",
+                        animation: "dotPulse 1s ease-in-out infinite",
+                        animationDelay: `${delay}ms`,
+                      }}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Message 3 – agent with vendor cards */}
-            <div className="self-start flex flex-col" style={{ maxWidth: "84%", gap: "8px" }}>
-              <div
-                className="text-sm leading-relaxed"
-                style={{
-                  backgroundColor: "#1A1428",
-                  borderRadius: "16px 16px 4px 16px",
-                  padding: "11px 14px",
-                  color: "#F5F0E8",
-                }}
-              >
-                אני אבדוק ישירות מולה. בינתיים - 3 צלמים שמדויקים לסגנון שלכם:
-              </div>
-
-              <VendorCard
-                name="יובל כהן צילום"
-                desc="סגנון דוקומנטרי · תל אביב"
-                price="₪8,500–12,000"
-                accentColor="#E8A87C"
-                iconBg="rgba(232,168,124,0.10)"
-              />
-              <VendorCard
-                name="מיכל ברק סטודיו"
-                desc="בוהו-שיק · מרכז"
-                price="₪7,000–10,000"
-                accentColor="#9B7BC4"
-                iconBg="rgba(155,123,196,0.10)"
-              />
-              <VendorCard
-                name="לירן אביב"
-                desc="לייטרום · כפר סבא"
-                price="₪6,500–9,000"
-                accentColor="#D4B896"
-                iconBg="rgba(212,184,150,0.10)"
-              />
-            </div>
+            <div ref={bottomRef} />
           </div>
 
           {/* Input bar */}
@@ -219,6 +235,7 @@ export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
               }}
             >
               <input
+                ref={inputRef}
                 className="flex-1 bg-transparent text-sm outline-none"
                 style={{
                   color: "#F5F0E8",
@@ -226,15 +243,25 @@ export default function ChatOverlay({ isOpen, onClose }: ChatOverlayProps) {
                   fontFamily: "inherit",
                 }}
                 placeholder="כתוב הודעה..."
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                  }
+                }}
               />
               <button
+                onClick={sendMessage}
                 className="flex items-center justify-center rounded-full flex-shrink-0"
                 style={{
                   width: "34px",
                   height: "34px",
-                  backgroundColor: "#E8A87C",
+                  backgroundColor: isLoading ? "rgba(232,168,124,0.4)" : "#E8A87C",
                   border: "none",
-                  cursor: "pointer",
+                  cursor: isLoading ? "not-allowed" : "pointer",
+                  transition: "background-color 0.2s",
                 }}
               >
                 <ArrowUp size={16} style={{ color: "#1A1428" }} />

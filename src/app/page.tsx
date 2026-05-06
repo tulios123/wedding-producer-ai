@@ -10,15 +10,57 @@ import {
   Shirt,
   Sparkles,
   ArrowUp,
+  LucideIcon,
 } from "lucide-react";
 import ChatOverlay from "@/components/ChatOverlay";
 
+const ICONS: Record<string, LucideIcon> = {
+  Building2,
+  Camera,
+  Music,
+  UtensilsCrossed,
+  Shirt,
+};
+
+const statusConfig: Record<string, { label: string; color: string; bg: string }> = {
+  idle:        { label: "לא טופל", color: "#6B6478", bg: "rgba(107,100,120,0.12)" },
+  collecting:  { label: "אוספים",  color: "#B8A4D9", bg: "rgba(184,164,217,0.12)" },
+  negotiating: { label: 'במו"מ',   color: "#E8A87C", bg: "rgba(232,168,124,0.12)" },
+  hold:        { label: "Hold",    color: "#D4A574", bg: "rgba(212,180,150,0.12)" },
+  signed:      { label: "חתום",    color: "#8FBC8F", bg: "rgba(143,188,143,0.12)" },
+};
+
+interface Slot {
+  id: string;
+  name: string;
+  icon: string;
+  status: string;
+  vendor: string;
+}
+
 export default function Home() {
   const [chatOpen, setChatOpen] = useState(false);
+  const [slots, setSlots] = useState<Slot[]>([
+    { id: "venue",       name: "מקום",        icon: "Building2",      status: "signed",      vendor: "גן האגם הקסום" },
+    { id: "photography", name: "צילום סטילס", icon: "Camera",         status: "negotiating", vendor: "דנה לוי" },
+    { id: "music",       name: "מוזיקה",      icon: "Music",          status: "collecting",  vendor: "3 אופציות" },
+    { id: "catering",    name: "קייטרינג",    icon: "UtensilsCrossed",status: "hold",        vendor: "בית מטבח" },
+    { id: "dress",       name: "שמלת כלה",    icon: "Shirt",          status: "idle",        vendor: "בוא נדבר" },
+  ]);
+
+  const handleSlotUpdate = (update: { slot: string; status: string; vendor?: string }) => {
+    setSlots((prev) =>
+      prev.map((s) =>
+        s.id === update.slot
+          ? { ...s, status: update.status, vendor: update.vendor || s.vendor }
+          : s
+      )
+    );
+  };
 
   return (
     <>
-      <ChatOverlay isOpen={chatOpen} onClose={() => setChatOpen(false)} />
+      <ChatOverlay isOpen={chatOpen} onClose={() => setChatOpen(false)} onSlotUpdate={handleSlotUpdate} />
       <motion.div
         className="flex flex-col h-screen w-full"
         style={{ backgroundColor: "#0F0A1A" }}
@@ -60,7 +102,8 @@ export default function Home() {
                 className="col-span-2 rounded-3xl relative overflow-hidden"
                 style={{
                   backgroundColor: "#1A1428",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.11)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
                   padding: "20px",
                 }}
               >
@@ -102,30 +145,42 @@ export default function Home() {
 
               {/* Widget 2 – מקום signed */}
               <div
-                className="col-span-2 flex flex-row items-center rounded-2xl"
+                className="col-span-2 flex flex-row items-center rounded-2xl overflow-hidden relative"
                 style={{
-                  backgroundColor: "#1A1428",
                   border: "1px solid rgba(143,188,143,0.30)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                  minHeight: "80px",
                   padding: "14px",
                   gap: "12px",
+                  backgroundImage: "url(https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80)",
+                  backgroundSize: "cover",
+                  backgroundPosition: "center",
                 }}
               >
+                {/* Dark overlay */}
                 <div
-                  className="flex items-center justify-center rounded-xl flex-shrink-0"
-                  style={{ width: "38px", height: "38px", backgroundColor: "rgba(143,188,143,0.10)" }}
+                  className="absolute inset-0"
+                  style={{
+                    background: "linear-gradient(to left, rgba(15,10,26,0.85) 0%, rgba(15,10,26,0.5) 100%)",
+                    pointerEvents: "none",
+                  }}
+                />
+                <div
+                  className="flex items-center justify-center rounded-xl flex-shrink-0 relative"
+                  style={{ width: "38px", height: "38px", backgroundColor: "rgba(143,188,143,0.15)" }}
                 >
                   <Building2 size={18} style={{ color: "#8FBC8F" }} />
                 </div>
-                <div className="flex flex-col flex-1">
-                  <span style={{ color: "#7A7280", fontSize: "10px" }}>מקום</span>
+                <div className="flex flex-col flex-1 relative">
+                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "10px" }}>מקום</span>
                   <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "15px" }}>
                     גן האגם הקסום
                   </span>
                 </div>
                 <span
-                  className="font-semibold flex-shrink-0 rounded-full"
+                  className="font-semibold flex-shrink-0 rounded-full relative"
                   style={{
-                    backgroundColor: "rgba(143,188,143,0.10)",
+                    backgroundColor: "rgba(143,188,143,0.18)",
                     color: "#8FBC8F",
                     fontSize: "12px",
                     padding: "4px 10px",
@@ -135,61 +190,33 @@ export default function Home() {
                 </span>
               </div>
 
-              {/* Widget 3 – צילום סטילס */}
-              <VendorWidget
-                name="צילום סטילס"
-                sub="דנה לוי"
-                badgeLabel='במו"מ'
-                badgeColor="#E8A87C"
-                borderColor="rgba(232,168,124,0.20)"
-                hoverBorderColor="rgba(232,168,124,0.40)"
-                icon={<Camera size={16} style={{ color: "#E8A87C" }} />}
-                iconBg="rgba(232,168,124,0.12)"
-              />
-
-              {/* Widget 4 – מוזיקה */}
-              <VendorWidget
-                name="מוזיקה"
-                sub="3 אופציות"
-                badgeLabel="אוספים"
-                badgeColor="#B8A4D9"
-                borderColor="rgba(184,164,217,0.20)"
-                hoverBorderColor="rgba(184,164,217,0.40)"
-                icon={<Music size={16} style={{ color: "#B8A4D9" }} />}
-                iconBg="rgba(184,164,217,0.12)"
-              />
-
-              {/* Widget 5 – קייטרינג */}
-              <VendorWidget
-                name="קייטרינג"
-                sub="בית מטבח"
-                badgeLabel="Hold"
-                badgeColor="#D4A574"
-                borderColor="rgba(212,165,116,0.20)"
-                hoverBorderColor="rgba(212,165,116,0.40)"
-                icon={<UtensilsCrossed size={16} style={{ color: "#D4A574" }} />}
-                iconBg="rgba(212,165,116,0.12)"
-              />
-
-              {/* Widget 6 – שמלת כלה */}
-              <VendorWidget
-                name="שמלת כלה"
-                sub="בוא נדבר"
-                badgeLabel="לא טופל"
-                badgeColor="#6B6478"
-                borderColor="rgba(107,100,120,0.20)"
-                hoverBorderColor="rgba(107,100,120,0.38)"
-                icon={<Shirt size={16} style={{ color: "#6B6478" }} />}
-                iconBg="rgba(107,100,120,0.12)"
-                dimmed
-              />
+              {/* Slot widgets – rendered dynamically, skip venue (shown above) */}
+              {slots.filter((s) => s.id !== "venue").map((slot) => {
+                const cfg = statusConfig[slot.status] ?? statusConfig.idle;
+                const IconComp = ICONS[slot.icon];
+                return (
+                  <VendorWidget
+                    key={slot.id}
+                    name={slot.name}
+                    sub={slot.vendor}
+                    badgeLabel={cfg.label}
+                    badgeColor={cfg.color}
+                    borderColor={`${cfg.color}33`}
+                    hoverBorderColor={`${cfg.color}66`}
+                    icon={<IconComp size={16} style={{ color: cfg.color }} />}
+                    iconBg={cfg.bg}
+                    dimmed={slot.status === "idle"}
+                  />
+                );
+              })}
 
               {/* Widget 7 – Budget */}
               <div
                 className="col-span-2 rounded-2xl"
                 style={{
                   backgroundColor: "#1A1428",
-                  border: "1px solid rgba(255,255,255,0.08)",
+                  border: "1px solid rgba(255,255,255,0.11)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
                   padding: "14px",
                 }}
               >
@@ -329,6 +356,7 @@ function VendorWidget({
       style={{
         backgroundColor: "#1A1428",
         border: `1px solid ${hovered ? hoverBorderColor : borderColor}`,
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
         padding: "13px",
         minHeight: "108px",
         opacity: dimmed ? 0.6 : 1,
