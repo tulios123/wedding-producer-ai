@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUp } from "lucide-react";
+import { usePersistedState } from "@/hooks/usePersistedState";
+import type { Profile, Slot, UpdateTag } from "@/types";
 
 interface Message {
   role: "user" | "assistant";
@@ -11,19 +13,15 @@ interface Message {
 
 const INITIAL_MESSAGE: Message = {
   role: "assistant",
-  content: "שלום נועה! 127 ימים לחתונה. הדבר הדחוף ביותר עכשיו הוא לסגור צלם - רוצה שאציג כמה אופציות?",
+  content: "שלום! אני המפיק שלכם. ספרו לי - מי אתם ומתי החתונה?",
 };
-
-interface SlotUpdate {
-  slot: string;
-  status: string;
-  vendor?: string;
-}
 
 interface ChatOverlayProps {
   isOpen: boolean;
   onClose: () => void;
-  onSlotUpdate: (update: SlotUpdate) => void;
+  onUpdate: (update: UpdateTag) => void;
+  profile: Profile;
+  slots: Slot[];
 }
 
 function renderMessage(content: string): string {
@@ -33,8 +31,8 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onSlotUpdate }: ChatOverlayProps) {
-  const [messages, setMessages] = useState<Message[]>([INITIAL_MESSAGE]);
+export default function ChatOverlay({ isOpen, onClose, onUpdate, profile, slots }: ChatOverlayProps) {
+  const [messages, setMessages] = usePersistedState<Message[]>("chatHistory", [INITIAL_MESSAGE]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -63,11 +61,14 @@ export default function ChatOverlay({ isOpen, onClose, onSlotUpdate }: ChatOverl
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages }),
+        body: JSON.stringify({ messages: nextMessages, profile, slots }),
       });
       const data = await res.json();
+      console.log("[chat] data.updates received:", data.updates);
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
-      if (data.update) onSlotUpdate(data.update);
+      for (const update of (data.updates ?? [])) {
+        onUpdate(update);
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
