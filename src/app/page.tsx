@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import ChatOverlay from "@/components/ChatOverlay";
 import WelcomeScreen from "@/components/WelcomeScreen";
+import { VendorCard } from "@/components/VendorCard";
 import { usePersistedState, clearAll } from "@/hooks/usePersistedState";
 import type { Slot, Profile, UpdateTag, SlotStatus, Message } from "@/types";
 
@@ -439,6 +440,37 @@ export default function Home() {
                   />
                 );
               })}
+
+              {/* Favorites Widget */}
+              {favorites.length > 0 && (
+                <div
+                  className="col-span-2 rounded-2xl"
+                  style={{
+                    backgroundColor: "#1A1428",
+                    border: "1px solid rgba(255,255,255,0.11)",
+                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                    padding: "14px",
+                  }}
+                >
+                  <p
+                    className="font-medium"
+                    style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
+                  >
+                    ספקים שמורים
+                  </p>
+                  <div className="flex flex-col" style={{ gap: "8px" }}>
+                    {favorites.map((id) => (
+                      <VendorCard
+                        key={id}
+                        vendorId={id}
+                        onTap={() => setChatOpen(true)}
+                        onHeartClick={() => toggleFavorite(id)}
+                        isFavorite={true}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Budget Widget */}
               <div
