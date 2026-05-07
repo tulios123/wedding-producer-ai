@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUp } from "lucide-react";
 import type { Profile, Slot, UpdateTag, Message } from "@/types";
 import { VendorCard } from "@/components/VendorCard";
+import vendorsData from "@/data/vendors.json";
 
 interface ChatOverlayProps {
   isOpen: boolean;
@@ -16,6 +17,8 @@ interface ChatOverlayProps {
   profile: Profile;
   slots: Slot[];
   mode?: 'welcome' | 'overlay';
+  favorites?: string[];
+  onToggleFavorite?: (id: string) => void;
 }
 
 function renderMessage(content: string): string {
@@ -25,7 +28,7 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay' }: ChatOverlayProps) {
+export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite }: ChatOverlayProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -39,15 +42,15 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
     if (isOpen) inputRef.current?.focus();
   }, [isOpen]);
 
-  async function sendMessage() {
-    const text = inputValue.trim();
+  async function sendMessage(overrideText?: string) {
+    const text = (overrideText ?? inputValue).trim();
     if (!text || isLoading) return;
 
     const userMessage: Message = { role: "user", content: text };
     const nextMessages = [...messages, userMessage];
 
     setMessages(nextMessages);
-    setInputValue("");
+    if (!overrideText) setInputValue("");
     setIsLoading(true);
 
     try {
@@ -184,9 +187,12 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                         <VendorCard
                           key={id}
                           vendorId={id}
-                          onTap={() => console.log("vendor tapped:", id)}
-                          onHeartClick={() => console.log("heart toggled:", id)}
-                          isFavorite={false}
+                          onTap={() => {
+                            const vendor = vendorsData.vendors.find((v) => v.id === id);
+                            if (vendor) sendMessage(`ספר לי עוד על ${vendor.name}`);
+                          }}
+                          onHeartClick={() => onToggleFavorite?.(id)}
+                          isFavorite={favorites.includes(id)}
                         />
                       ))}
                     </div>
@@ -288,7 +294,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                 }}
               />
               <button
-                onClick={sendMessage}
+                onClick={() => sendMessage()}
                 className="flex items-center justify-center rounded-full flex-shrink-0"
                 style={{
                   width: "34px",

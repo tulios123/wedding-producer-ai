@@ -101,7 +101,12 @@ export default function Home() {
   const [chatHistory, setChatHistory] = usePersistedState<Message[]>("chatHistory", INITIAL_CHAT_MESSAGES);
   const [profile, setProfile] = usePersistedState<Profile>("profile", {});
   const [slots, setSlots] = usePersistedState<Slot[]>("slots", INITIAL_SLOTS);
+  const [favorites, setFavorites] = usePersistedState<string[]>("favorites", []);
   const [toast, setToast] = useState<string | null>(null);
+
+  function toggleFavorite(id: string) {
+    setFavorites((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
+  }
 
   function showToast(msg: string) {
     setToast(msg);
@@ -137,6 +142,8 @@ export default function Home() {
         onNavigate={() => setAppScreen('dashboard')}
         profile={profile}
         slots={slots}
+        favorites={favorites}
+        onToggleFavorite={toggleFavorite}
       />
     );
   }
@@ -167,6 +174,8 @@ export default function Home() {
         setMessages={setChatHistory}
         profile={profile}
         slots={slots}
+        favorites={favorites}
+        onToggleFavorite={toggleFavorite}
       />
 
       {/* Toast */}

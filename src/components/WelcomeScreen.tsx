@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowUp, RotateCcw } from "lucide-react";
 import type { Profile, Slot, UpdateTag, Message } from "@/types";
 import { VendorCard } from "@/components/VendorCard";
+import vendorsData from "@/data/vendors.json";
 import { clearAll } from "@/hooks/usePersistedState";
 
 function renderMessage(content: string): string {
@@ -21,9 +22,11 @@ interface WelcomeScreenProps {
   onNavigate: (screen: "dashboard") => void;
   profile: Profile;
   slots: Slot[];
+  favorites?: string[];
+  onToggleFavorite?: (id: string) => void;
 }
 
-export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavigate, profile, slots }: WelcomeScreenProps) {
+export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavigate, profile, slots, favorites = [], onToggleFavorite }: WelcomeScreenProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,15 +42,15 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  async function sendMessage() {
-    const text = inputValue.trim();
+  async function sendMessage(overrideText?: string) {
+    const text = (overrideText ?? inputValue).trim();
     if (!text || isLoading) return;
 
     const userMessage: Message = { role: "user", content: text };
     const nextMessages = [...messages, userMessage];
 
     setMessages(nextMessages);
-    setInputValue("");
+    if (!overrideText) setInputValue("");
     setIsLoading(true);
 
     try {
@@ -172,7 +175,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
             }}
           />
           <button
-            onClick={sendMessage}
+            onClick={() => sendMessage()}
             style={{
               width: "38px",
               height: "38px",
@@ -262,9 +265,12 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
                         <VendorCard
                           key={id}
                           vendorId={id}
-                          onTap={() => console.log("vendor tapped:", id)}
-                          onHeartClick={() => console.log("heart toggled:", id)}
-                          isFavorite={false}
+                          onTap={() => {
+                            const vendor = vendorsData.vendors.find((v) => v.id === id);
+                            if (vendor) sendMessage(`ספר לי עוד על ${vendor.name}`);
+                          }}
+                          onHeartClick={() => onToggleFavorite?.(id)}
+                          isFavorite={favorites.includes(id)}
                         />
                       ))}
                     </div>
