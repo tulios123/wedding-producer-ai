@@ -88,15 +88,17 @@ function resolveDateDisplay(weddingDate: string | undefined): DateDisplay {
   return { kind: "freetext", text: weddingDate };
 }
 
-const INITIAL_CHAT_MESSAGE: Message = {
-  role: "assistant",
-  content: "שלום! אני המפיק שלכם. ספרו לי - מי אתם ומתי החתונה?",
-};
+const INITIAL_CHAT_MESSAGES: Message[] = [
+  {
+    role: "assistant",
+    content: "שלום! אני המפיק שלכם. ספרו לי - מי אתם ומתי החתונה?",
+  },
+];
 
 export default function Home() {
   const [chatOpen, setChatOpen] = useState(false);
   const [appScreen, setAppScreen] = usePersistedState<'welcome' | 'dashboard'>('screen', 'welcome');
-  const [chatHistory, setChatHistory] = usePersistedState<Message[]>("chatHistory", [INITIAL_CHAT_MESSAGE]);
+  const [chatHistory, setChatHistory] = usePersistedState<Message[]>("chatHistory", INITIAL_CHAT_MESSAGES);
   const [profile, setProfile] = usePersistedState<Profile>("profile", {});
   const [slots, setSlots] = usePersistedState<Slot[]>("slots", INITIAL_SLOTS);
   const [toast, setToast] = useState<string | null>(null);

@@ -2,8 +2,10 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowUp } from "lucide-react";
+import { ArrowUp, RotateCcw } from "lucide-react";
 import type { Profile, Slot, UpdateTag, Message } from "@/types";
+import { VendorCard } from "@/components/VendorCard";
+import { clearAll } from "@/hooks/usePersistedState";
 
 function renderMessage(content: string): string {
   return content
@@ -54,8 +56,11 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: nextMessages, profile, slots }),
       });
+      if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      const assistantMsg: Message = { role: "assistant", content: data.reply };
+      if (data.cards?.length) assistantMsg.cards = data.cards;
+      setMessages((prev) => [...prev, assistantMsg]);
       for (const update of data.updates ?? []) {
         if (update.type === "navigation") {
           if (update.action === "go_to_dashboard") onNavigate("dashboard");
@@ -63,7 +68,8 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           onUpdate(update);
         }
       }
-    } catch {
+    } catch (e) {
+      console.error("[WelcomeScreen] sendMessage error:", e);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "אירעה שגיאה, נסה שוב" },
@@ -185,11 +191,30 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           </button>
         </div>
 
-        {/* Skip link */}
+        {/* Skip link + dev reset */}
+        <div style={{ marginTop: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
+        {process.env.NODE_ENV !== "production" && (
+          <button
+            onClick={() => {
+              if (window.confirm("איפוס יחזיר הכל למצב התחלתי. בטוח?")) {
+                clearAll();
+                window.location.reload();
+              }
+            }}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: "28px", height: "28px", borderRadius: "50%",
+              backgroundColor: "rgba(255,255,255,0.06)",
+              border: "1px solid rgba(255,255,255,0.10)",
+              cursor: "pointer", flexShrink: 0,
+            }}
+          >
+            <RotateCcw size={13} style={{ color: "#7A7280" }} />
+          </button>
+        )}
         <button
           onClick={() => onNavigate("dashboard")}
           style={{
-            marginTop: "14px",
             color: "#6B6478",
             fontSize: "13px",
             background: "none",
@@ -201,6 +226,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
         >
           כבר יש לי נתונים — עבור לדשבורד
         </button>
+        </div>
 
         {/* Conversation */}
         {hasMessages && (
@@ -217,9 +243,10 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           >
             {messages.map((msg, i) =>
               msg.role === "assistant" ? (
-                <div key={i} style={{ alignSelf: "flex-start", maxWidth: "84%" }}>
+                <div key={i} style={{ alignSelf: "flex-start", display: "flex", flexDirection: "column" }}>
                   <div
                     style={{
+                      maxWidth: "84%",
                       backgroundColor: "#1A1428",
                       borderRadius: "16px 16px 4px 16px",
                       padding: "11px 14px",
@@ -229,6 +256,19 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
                     }}
                     dangerouslySetInnerHTML={{ __html: renderMessage(msg.content) }}
                   />
+                  {msg.cards && msg.cards.length > 0 && (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "8px", marginTop: "12px" }}>
+                      {msg.cards.map((id) => (
+                        <VendorCard
+                          key={id}
+                          vendorId={id}
+                          onTap={() => console.log("vendor tapped:", id)}
+                          onHeartClick={() => console.log("heart toggled:", id)}
+                          isFavorite={false}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div key={i} style={{ alignSelf: "flex-end", maxWidth: "84%" }}>

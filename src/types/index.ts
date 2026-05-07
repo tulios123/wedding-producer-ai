@@ -25,6 +25,7 @@ export interface Profile {
 export interface Message {
   role: 'user' | 'assistant';
   content: string;
+  cards?: string[];
 }
 
 export interface ChatMessage {

@@ -23,14 +23,14 @@ export function VendorCard({ vendorId, onTap, onHeartClick, isFavorite }: Vendor
     >
       <button
         onClick={(e) => { e.stopPropagation(); onHeartClick(); }}
-        className="absolute top-2 left-2 z-10 p-0.5"
+        className="absolute top-2 left-2 z-10 rounded-full bg-black/30 backdrop-blur-sm p-1.5"
         aria-label={isFavorite ? 'הסר ממועדפים' : 'הוסף למועדפים'}
       >
         <Heart
           size={16}
-          fill={isFavorite ? '#E8A87C' : 'none'}
-          stroke={isFavorite ? '#E8A87C' : '#B8B0A8'}
+          fill={isFavorite ? 'currentColor' : 'none'}
           strokeWidth={1.5}
+          className={isFavorite ? 'text-accent-primary' : 'text-white'}
         />
       </button>
 
@@ -40,6 +40,7 @@ export function VendorCard({ vendorId, onTap, onHeartClick, isFavorite }: Vendor
             src={vendor.images[0]}
             alt={vendor.name}
             fill
+            sizes="136px"
             style={{ objectFit: 'cover' }}
           />
         </div>

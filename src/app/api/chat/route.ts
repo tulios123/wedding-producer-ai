@@ -132,6 +132,9 @@ STATUS: idle / collecting / negotiating / hold / signed
 
 **ברירת מחדל:** הצג 3 ספקים מהרשימה שתואמים לקריטריונים.
 
+כשאתה מציג ספקים, הוסף בסוף התגובה תג CARDS עם מזהי הספקים שהצגת — בשורה נפרדת, לאחר תגי UPDATE:
+[CARDS:["id1","id2","id3"]]
+
 **אם מצאת רק 2 מתאימים:** הצג 2 ואמור במפורש:
 "מצאתי 2 שמתאימים בדיוק לקריטריונים שלכם. אם נרחיב [פרמטר ספציפי] נכנסים עוד — רוצה?"
 
@@ -177,6 +180,9 @@ export async function POST(req: NextRequest) {
       slots = [],
     }: { messages: Message[]; profile: Profile; slots: Slot[] } = await req.json();
 
+    if (!Array.isArray(messages)) throw new Error("messages must be an array");
+    const apiMessages = messages.map(({ role, content }) => ({ role, content }));
+
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
       headers: {
@@ -188,7 +194,7 @@ export async function POST(req: NextRequest) {
         model: "claude-haiku-4-5",
         max_tokens: 1024,
         system: buildSystemPrompt(profile, slots),
-        messages,
+        messages: apiMessages,
       }),
     });
 
@@ -245,9 +251,26 @@ export async function POST(req: NextRequest) {
 
     console.log("[chat] final updates array:", JSON.stringify(updates, null, 2));
 
-    const cleanReply = raw.replace(/\s*\[UPDATE:[^\]]*\]/g, "").trim();
+    const cardsRegex = /\[CARDS:(\[(?:"[^"]*"(?:,\s*"[^"]*")*)\])\]/g;
+    const cardsMatches = [...raw.matchAll(cardsRegex)];
+    const cards: string[] = [];
+    for (const match of cardsMatches) {
+      try {
+        const parsed = JSON.parse(match[1]);
+        if (Array.isArray(parsed)) {
+          cards.push(...parsed.filter((id: unknown): id is string => typeof id === "string"));
+        }
+      } catch {
+        console.warn("[chat] Failed to parse CARDS tag:", match[1]);
+      }
+    }
 
-    return NextResponse.json({ reply: cleanReply, updates });
+    const cleanReply = raw
+      .replace(/\s*\[UPDATE:[^\]]*\]/g, "")
+      .replace(/\s*\[CARDS:\[.*?\]\]/g, "")
+      .trim();
+
+    return NextResponse.json({ reply: cleanReply, updates, cards });
   } catch {
     return NextResponse.json(
       { reply: "אירעה שגיאה, נסה שוב", updates: [] },

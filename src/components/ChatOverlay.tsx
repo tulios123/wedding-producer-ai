@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUp } from "lucide-react";
 import type { Profile, Slot, UpdateTag, Message } from "@/types";
+import { VendorCard } from "@/components/VendorCard";
 
 interface ChatOverlayProps {
   isOpen: boolean;
@@ -55,9 +56,12 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: nextMessages, profile, slots }),
       });
+      if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();
       console.log("[chat] data.updates received:", data.updates);
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply }]);
+      const assistantMsg: Message = { role: "assistant", content: data.reply };
+      if (data.cards?.length) assistantMsg.cards = data.cards;
+      setMessages((prev) => [...prev, assistantMsg]);
       for (const update of (data.updates ?? [])) {
         if (update.type === "navigation") {
           if (update.action === "go_to_dashboard") onNavigate?.("dashboard");
@@ -65,7 +69,8 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
           onUpdate(update);
         }
       }
-    } catch {
+    } catch (e) {
+      console.error("[ChatOverlay] sendMessage error:", e);
       setMessages((prev) => [
         ...prev,
         { role: "assistant", content: "אירעה שגיאה, נסה שוב" },
@@ -161,10 +166,11 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
           >
             {messages.map((msg, i) =>
               msg.role === "assistant" ? (
-                <div key={i} className="self-start" style={{ maxWidth: "84%" }}>
+                <div key={i} className="self-start flex flex-col">
                   <div
                     className="text-sm leading-relaxed"
                     style={{
+                      maxWidth: "84%",
                       backgroundColor: "#1A1428",
                       borderRadius: "16px 16px 4px 16px",
                       padding: "11px 14px",
@@ -172,6 +178,19 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                     }}
                     dangerouslySetInnerHTML={{ __html: renderMessage(msg.content) }}
                   />
+                  {msg.cards && msg.cards.length > 0 && (
+                    <div className="flex flex-col gap-2 mt-3">
+                      {msg.cards.map((id) => (
+                        <VendorCard
+                          key={id}
+                          vendorId={id}
+                          onTap={() => console.log("vendor tapped:", id)}
+                          onHeartClick={() => console.log("heart toggled:", id)}
+                          isFavorite={false}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div key={i} className="self-end" style={{ maxWidth: "84%" }}>
