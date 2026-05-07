@@ -37,3 +37,30 @@ export type UpdateTag =
   | { type: 'profile'; field: keyof Profile; value: any }
   | { type: 'slot'; slot: SlotId; status: SlotStatus; vendor?: string; estimate?: { min: number; max: number }; amount?: number }
   | { type: 'navigation'; action: 'go_to_dashboard' };
+
+export interface VendorDetails {
+  capacity?: { min: number; max: number };
+  type?: string;
+  kashrut?: string;
+  parking?: boolean;
+  pricePerPerson?: { min: number; max: number };
+  cuisineStyle?: string;
+  dietary?: string[];
+  style?: string;
+  package?: string;
+  deliverables?: string[];
+  experience?: number;
+}
+
+export interface Vendor {
+  id: string;
+  name: string;
+  category: 'venue' | 'catering' | 'photography';
+  region: string;
+  priceRange: { min: number; max: number };
+  style: string[];
+  description: string;
+  bullets: string[];
+  images: string[];
+  details: VendorDetails;
+}
