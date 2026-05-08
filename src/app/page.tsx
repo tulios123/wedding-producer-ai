@@ -242,7 +242,7 @@ export default function Home() {
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto">
             {/* Header */}
-            <div className="flex flex-row items-center justify-between px-4" style={{ paddingTop: "16px", paddingBottom: "8px" }}>
+            <div className="flex flex-row items-center justify-between px-4 pt-safe-4" style={{ paddingBottom: "8px" }}>
               <div className="flex flex-col">
                 <span style={{ color: "#A89098", fontSize: "11px", letterSpacing: "0.04em" }}>AI Wedding Producer</span>
                 <span className="font-bold" style={{ color: "#1A0F14", fontSize: "20px", letterSpacing: "-0.3px" }}>

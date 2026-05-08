@@ -112,10 +112,12 @@
 }
 
 /* Safe-area utilities for iPhone home bar */
-.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pb-safe   { padding-bottom: env(safe-area-inset-bottom); }
 .pb-safe-4 { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
 .pb-safe-6 { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 .pb-safe-7 { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+.pt-safe   { padding-top: env(safe-area-inset-top); }
+.pt-safe-4 { padding-top: max(16px, env(safe-area-inset-top)); }
 
 /* Prevent iOS input zoom — all inputs stay at 16px minimum */
 input, textarea, select {

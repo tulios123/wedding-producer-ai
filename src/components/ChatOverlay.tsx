@@ -123,9 +123,11 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
         >
           {/* Header */}
           <div
-            className="flex-shrink-0 flex flex-row items-center gap-2.5"
+            className="flex-shrink-0 flex flex-row items-center gap-2.5 pt-safe-4"
             style={{
-              padding: "14px 16px",
+              paddingLeft: "16px",
+              paddingRight: "16px",
+              paddingBottom: "14px",
               borderBottom: "1px solid rgba(180,120,140,0.12)",
             }}
           >
@@ -223,7 +225,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                     </div>
                   )}
                   {msg.datePicker && i === messages.length - 1 && (
-                    <div style={{ maxWidth: "84%", marginTop: "6px" }}>
+                    <div style={{ width: "100%", marginTop: "6px" }}>
                       <CalendarPicker onSelect={(val) => sendMessage(val)} />
                     </div>
                   )}
@@ -232,8 +234,8 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                 <div key={i} className="self-end flex flex-col items-end" style={{ maxWidth: "84%" }}>
                   {msg.vendorNote && (
                     <span style={{
-                      fontSize: '11px', color: '#E8A87C', marginBottom: '4px',
-                      backgroundColor: 'rgba(232,168,124,0.12)', borderRadius: '10px',
+                      fontSize: '11px', color: '#C97B8F', marginBottom: '4px',
+                      backgroundColor: 'rgba(201,123,143,0.12)', borderRadius: '10px',
                       padding: '2px 9px', fontWeight: 600,
                     }}>
                       בנוגע ל-{msg.vendorNote}
