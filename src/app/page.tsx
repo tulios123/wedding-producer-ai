@@ -19,7 +19,9 @@ import {
 import ChatOverlay from "@/components/ChatOverlay";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import { VendorCard } from "@/components/VendorCard";
+import { VendorDetailSheet } from "@/components/VendorDetailSheet";
 import { usePersistedState, clearAll } from "@/hooks/usePersistedState";
+import vendorsData from "@/data/vendors.json";
 import type { Slot, Profile, UpdateTag, SlotStatus, Message } from "@/types";
 
 const SLOT_ICONS: Record<string, LucideIcon> = {
@@ -103,6 +105,7 @@ export default function Home() {
   const [profile, setProfile] = usePersistedState<Profile>("profile", {});
   const [slots, setSlots] = usePersistedState<Slot[]>("slots", INITIAL_SLOTS);
   const [favorites, setFavorites] = usePersistedState<string[]>("favorites", []);
+  const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   function toggleFavorite(id: string) {
@@ -167,6 +170,14 @@ export default function Home() {
 
   return (
     <>
+      <VendorDetailSheet
+        vendorId={selectedVendorId}
+        isFavorite={selectedVendorId ? favorites.includes(selectedVendorId) : false}
+        onClose={() => setSelectedVendorId(null)}
+        onToggleFavorite={() => selectedVendorId && toggleFavorite(selectedVendorId)}
+        onAskAgent={() => { setSelectedVendorId(null); setChatOpen(true); }}
+      />
+
       <ChatOverlay
         isOpen={chatOpen}
         onClose={() => setChatOpen(false)}
@@ -441,36 +452,76 @@ export default function Home() {
                 );
               })}
 
-              {/* Favorites Widget */}
-              {favorites.length > 0 && (
-                <div
-                  className="col-span-2 rounded-2xl"
-                  style={{
-                    backgroundColor: "#1A1428",
-                    border: "1px solid rgba(255,255,255,0.11)",
-                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                    padding: "14px",
-                  }}
+              {/* Favorites Widget — always visible */}
+              <div
+                className="col-span-2 rounded-2xl"
+                style={{
+                  backgroundColor: "#1A1428",
+                  border: "1px solid rgba(255,255,255,0.11)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                  padding: "14px",
+                }}
+              >
+                <p
+                  className="font-medium"
+                  style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
                 >
-                  <p
-                    className="font-medium"
-                    style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
-                  >
-                    ספקים שמורים
+                  ספקים שמורים
+                </p>
+                {favorites.length === 0 ? (
+                  <p style={{ color: "#6B6478", fontSize: "13px", textAlign: "center", padding: "10px 0" }}>
+                    לחצו על ❤️ בכרטיס ספק כדי לשמור אותו כאן
                   </p>
+                ) : (
                   <div className="flex flex-col" style={{ gap: "8px" }}>
                     {favorites.map((id) => (
                       <VendorCard
                         key={id}
                         vendorId={id}
-                        onTap={() => setChatOpen(true)}
+                        onTap={() => setSelectedVendorId(id)}
                         onHeartClick={() => toggleFavorite(id)}
                         isFavorite={true}
                       />
                     ))}
                   </div>
-                </div>
-              )}
+                )}
+              </div>
+
+              {/* Vendors Catalog */}
+              {(["venue", "catering", "photography"] as const).map((cat) => {
+                const catLabel = cat === "venue" ? "מקומות" : cat === "catering" ? "קייטרינג" : "צילום";
+                const catVendors = vendorsData.vendors.filter((v) => v.category === cat);
+                return (
+                  <div
+                    key={cat}
+                    className="col-span-2 rounded-2xl"
+                    style={{
+                      backgroundColor: "#1A1428",
+                      border: "1px solid rgba(255,255,255,0.11)",
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                      padding: "14px",
+                    }}
+                  >
+                    <p
+                      className="font-medium"
+                      style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
+                    >
+                      {catLabel}
+                    </p>
+                    <div className="flex flex-col" style={{ gap: "8px" }}>
+                      {catVendors.map((v) => (
+                        <VendorCard
+                          key={v.id}
+                          vendorId={v.id}
+                          onTap={() => setSelectedVendorId(v.id)}
+                          onHeartClick={() => toggleFavorite(v.id)}
+                          isFavorite={favorites.includes(v.id)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
 
               {/* Budget Widget */}
               <div
