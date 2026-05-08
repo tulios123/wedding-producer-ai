@@ -212,26 +212,33 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(messages)) throw new Error("messages must be an array");
     const apiMessages = messages.map(({ role, content }) => ({ role, content }));
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": process.env.ANTHROPIC_API_KEY ?? "",
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-haiku-4-5",
-        max_tokens: 1024,
-        system: buildSystemPrompt(profile, slots, vendorContext),
-        messages: apiMessages,
-      }),
+    const reqBody = JSON.stringify({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1024,
+      system: buildSystemPrompt(profile, slots, vendorContext),
+      messages: apiMessages,
     });
 
-    if (!response.ok) {
-      throw new Error(`Anthropic API error: ${response.status}`);
+    let response: Response | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) await new Promise((r) => setTimeout(r, 1000 * attempt));
+      response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": process.env.ANTHROPIC_API_KEY ?? "",
+          "anthropic-version": "2023-06-01",
+        },
+        body: reqBody,
+      });
+      if (response.status !== 529) break;
     }
 
-    const data = await response.json();
+    if (!response!.ok) {
+      throw new Error(`Anthropic API error: ${response!.status}`);
+    }
+
+    const data = await response!.json();
     const raw: string = data.content?.[0]?.text ?? "";
 
     console.log("[chat] raw response:", raw);
@@ -300,7 +307,8 @@ export async function POST(req: NextRequest) {
       .trim();
 
     return NextResponse.json({ reply: cleanReply, updates, cards });
-  } catch {
+  } catch (err) {
+    console.error("[chat] route error:", err);
     return NextResponse.json(
       { reply: "אירעה שגיאה, נסה שוב", updates: [] },
       { status: 500 }

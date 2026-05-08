@@ -56,7 +56,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       }
       onInitialInputConsumed?.();
     }
-  }, [isOpen, initialInput, autoSend]);
+  }, [isOpen, initialInput]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function sendMessage(overrideText?: string) {
     const text = (overrideText ?? inputValue).trim();
