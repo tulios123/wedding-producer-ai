@@ -6,11 +6,6 @@ import {
   Building2,
   Camera,
   UtensilsCrossed,
-  Music,
-  Shirt,
-  Palette,
-  Leaf,
-  BookOpen,
   Sparkles,
   ArrowUp,
   RotateCcw,
@@ -32,11 +27,6 @@ const SLOT_ICONS: Record<string, LucideIcon> = {
   venue: Building2,
   photography: Camera,
   catering: UtensilsCrossed,
-  music: Music,
-  dress: Shirt,
-  makeup: Palette,
-  decor: Leaf,
-  rabbi: BookOpen,
 };
 
 const statusConfig: Record<SlotStatus, { label: string; color: string; bg: string }> = {
@@ -53,13 +43,6 @@ const INITIAL_SLOTS: Slot[] = [
   { id: "catering",    label: "קייטרינג",    status: "idle" },
 ];
 
-const PLACEHOLDER_SLOTS = [
-  { id: "music",  label: "מוזיקה" },
-  { id: "dress",  label: "שמלת כלה" },
-  { id: "makeup", label: "איפור" },
-  { id: "decor",  label: "עיצוב ופרחים" },
-  { id: "rabbi",  label: "רב מסדר" },
-] as const;
 
 function isExactDate(s: string): boolean {
   return /^\d{4}-\d{2}-\d{2}$/.test(s);
@@ -115,7 +98,6 @@ export default function Home() {
   const [chatInitialInput, setChatInitialInput] = useState("");
   const [chatAutoSend, setChatAutoSend] = useState(false);
   const [chatVendorContext, setChatVendorContext] = useState<{ slotLabel: string; vendorName?: string } | null>(null);
-  const [toast, setToast] = useState<string | null>(null);
 
   function toggleFavorite(id: string) {
     setFavorites((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
@@ -129,10 +111,6 @@ export default function Home() {
     setChatOpen(true);
   }
 
-  function showToast(msg: string) {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3000);
-  }
 
   const handleUpdate = (update: UpdateTag) => {
     if (update.type === "slot") {
@@ -235,25 +213,6 @@ export default function Home() {
         vendorContext={chatVendorContext}
       />
 
-      {/* Toast */}
-      {toast && (
-        <div
-          className="fixed z-40 rounded-full text-sm font-medium"
-          style={{
-            bottom: "96px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            backgroundColor: "#221A33",
-            border: "1px solid rgba(255,255,255,0.15)",
-            color: "#B8B0A8",
-            padding: "10px 20px",
-            pointerEvents: "none",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {toast}
-        </div>
-      )}
 
       <motion.div
         className="flex flex-col h-screen w-full"
@@ -413,27 +372,6 @@ export default function Home() {
                 );
               })}
 
-              {/* Placeholder slots */}
-              {PLACEHOLDER_SLOTS.map((p) => {
-                const IconComp = SLOT_ICONS[p.id];
-                return (
-                  <VendorWidget
-                    key={p.id}
-                    name={p.label}
-                    sub="בקרוב"
-                    badgeLabel="לא טופל"
-                    badgeColor="#6B6478"
-                    borderColor="rgba(107,100,120,0.18)"
-                    hoverBorderColor="rgba(107,100,120,0.28)"
-                    icon={<IconComp size={16} style={{ color: "#6B6478" }} />}
-                    iconBg="rgba(107,100,120,0.08)"
-                    dimmed
-                    onClick={() =>
-                      showToast("בקרוב - הפרוטוטייפ מתמקד ב-3 ספקי המפתח")
-                    }
-                  />
-                );
-              })}
 
               {/* Expandable Favorites + Vendors Widgets */}
               <div className="col-span-2">
