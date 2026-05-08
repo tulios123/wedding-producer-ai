@@ -14,6 +14,7 @@ interface VendorDetailSheetProps {
   onToggleFavorite: () => void;
   onAskAgent: () => void;
   onChatSend?: (text: string, vendorId: string) => void;
+  hideChatRow?: boolean;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -22,7 +23,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   photography: 'צילום',
 };
 
-export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavorite, onChatSend }: VendorDetailSheetProps) {
+export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavorite, onChatSend, hideChatRow }: VendorDetailSheetProps) {
   const vendor = vendorId ? (vendorsData.vendors as Vendor[]).find(v => v.id === vendorId) ?? null : null;
   const [input, setInput] = useState('');
 
@@ -142,7 +143,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
           </div>
 
           {/* Chat input bar */}
-          <form
+          {!hideChatRow && <form
             onSubmit={handleSend}
             style={{
               flexShrink: 0,
@@ -183,7 +184,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
             >
               <ArrowUp size={16} style={{ color: input.trim() ? '#1A1428' : 'rgba(232,168,124,0.4)' }} />
             </button>
-          </form>
+          </form>}
         </motion.div>
       )}
     </AnimatePresence>

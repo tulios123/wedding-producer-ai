@@ -93,6 +93,7 @@ export default function Home() {
   const [slots, setSlots] = usePersistedState<Slot[]>("slots", INITIAL_SLOTS);
   const [favorites, setFavorites] = usePersistedState<string[]>("favorites", []);
   const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
+  const [vendorOpenedFromChat, setVendorOpenedFromChat] = useState(false);
   const [expandedSection, setExpandedSection] = useState<"favorites" | "vendors" | null>(null);
   const [openSlotId, setOpenSlotId] = useState<SlotId | null>(null);
   const [chatInitialInput, setChatInitialInput] = useState("");
@@ -183,7 +184,8 @@ export default function Home() {
       <VendorDetailSheet
         vendorId={selectedVendorId}
         isFavorite={selectedVendorId ? favorites.includes(selectedVendorId) : false}
-        onClose={() => setSelectedVendorId(null)}
+        onClose={() => { setSelectedVendorId(null); setVendorOpenedFromChat(false); }}
+        hideChatRow={vendorOpenedFromChat}
         onToggleFavorite={() => selectedVendorId && toggleFavorite(selectedVendorId)}
         onAskAgent={() => {
           if (selectedVendorId) {
@@ -205,6 +207,7 @@ export default function Home() {
           setChatInitialInput(text);
           setChatAutoSend(true);
           setSelectedVendorId(null);
+          setVendorOpenedFromChat(false);
           setChatOpen(true);
         }}
       />
@@ -219,7 +222,7 @@ export default function Home() {
         slots={slots}
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
-        onVendorTap={(id) => setSelectedVendorId(id)}
+        onVendorTap={(id) => { setSelectedVendorId(id); setVendorOpenedFromChat(true); }}
         initialInput={chatInitialInput}
         autoSend={chatAutoSend}
         onInitialInputConsumed={() => { setChatInitialInput(""); setChatAutoSend(false); setChatVendorNote(undefined); }}
