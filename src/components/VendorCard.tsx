@@ -21,7 +21,7 @@ export function VendorCard({ vendorId, onTap, onHeartClick, isFavorite }: Vendor
     <div
       onClick={onTap}
       className="relative w-full rounded-2xl overflow-hidden cursor-pointer"
-      style={{ backgroundColor: '#FFFFFF', boxShadow: '0 2px 12px rgba(180,120,140,0.10)', height: '112px', display: 'flex' }}
+      style={{ backgroundColor: '#FFFFFF', boxShadow: '0 4px 20px rgba(201,123,143,0.14)', border: '1px solid rgba(201,123,143,0.14)', height: '112px', display: 'flex' }}
     >
       {/* Image */}
       <div className="relative flex-shrink-0" style={{ width: '38%' }}>

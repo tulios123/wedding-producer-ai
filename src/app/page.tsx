@@ -281,7 +281,8 @@ export default function Home() {
                 className="col-span-2 rounded-[22px] relative overflow-hidden"
                 style={{
                   background: "linear-gradient(135deg, #FFF0F4 0%, #FBF6F2 55%, #FFF8EE 100%)",
-                  boxShadow: "0 2px 20px rgba(201,123,143,0.14)",
+                  boxShadow: "0 4px 24px rgba(201,123,143,0.14)",
+                  border: "1.5px solid rgba(201,123,143,0.12)",
                   padding: "18px 18px 16px",
                   minHeight: "130px",
                   display: "flex",
@@ -337,7 +338,8 @@ export default function Home() {
               <div
                 className="col-span-2 flex flex-row items-center rounded-[22px] overflow-hidden relative cursor-pointer"
                 style={{
-                  boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
+                  boxShadow: venueSlot?.vendor ? "0 4px 24px rgba(0,0,0,0.18)" : "0 4px 20px rgba(201,123,143,0.10)",
+                  border: venueSlot?.vendor ? "none" : "1.5px solid rgba(201,123,143,0.12)",
                   minHeight: "84px",
                   padding: "16px",
                   gap: "14px",
@@ -401,7 +403,7 @@ export default function Home() {
                       flex: 1,
                       aspectRatio: "1",
                       backgroundColor: "#FFFFFF",
-                      boxShadow: expandedSection === "favorites" ? "0 0 0 2px rgba(201,123,143,0.45), 0 2px 16px rgba(201,123,143,0.12)" : "0 2px 16px rgba(180,120,140,0.10)",
+                      boxShadow: expandedSection === "favorites" ? "0 4px 24px rgba(201,123,143,0.18)" : "0 4px 20px rgba(201,123,143,0.10)",
                       borderRadius: "22px",
                       padding: "14px",
                       cursor: "pointer",
@@ -409,9 +411,9 @@ export default function Home() {
                       flexDirection: "column",
                       justifyContent: "space-between",
                       direction: "rtl",
-                      transition: "box-shadow 0.2s",
+                      transition: "box-shadow 0.2s, border-color 0.2s",
                       textAlign: "right",
-                      border: "none",
+                      border: expandedSection === "favorites" ? "1.5px solid rgba(201,123,143,0.40)" : "1.5px solid rgba(201,123,143,0.14)",
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -446,8 +448,8 @@ export default function Home() {
                     style={{
                       flex: 1,
                       aspectRatio: "1",
-                      backgroundColor: "#1C1828",
-                      boxShadow: expandedSection === "vendors" ? "0 0 0 2px rgba(232,168,124,0.5), 0 2px 12px rgba(0,0,0,0.45)" : "0 2px 12px rgba(0,0,0,0.45)",
+                      backgroundColor: "#FFFFFF",
+                      boxShadow: expandedSection === "vendors" ? "0 4px 24px rgba(201,123,143,0.18)" : "0 4px 20px rgba(201,123,143,0.10)",
                       borderRadius: "22px",
                       padding: "14px",
                       cursor: "pointer",
@@ -455,9 +457,9 @@ export default function Home() {
                       flexDirection: "column",
                       justifyContent: "space-between",
                       direction: "rtl",
-                      transition: "box-shadow 0.2s",
+                      transition: "box-shadow 0.2s, border-color 0.2s",
                       textAlign: "right",
-                      border: "none",
+                      border: expandedSection === "vendors" ? "1.5px solid rgba(201,123,143,0.40)" : "1.5px solid rgba(201,123,143,0.14)",
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -555,7 +557,7 @@ export default function Home() {
               {/* Budget Widget */}
               <div
                 className="col-span-2 rounded-[22px]"
-                style={{ backgroundColor: "#FFFFFF", boxShadow: "0 2px 16px rgba(180,120,140,0.10)", padding: "16px" }}
+                style={{ backgroundColor: "#FFFFFF", boxShadow: "0 4px 20px rgba(201,123,143,0.10)", border: "1.5px solid rgba(201,123,143,0.12)", padding: "16px" }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
                   <span style={{ color: "#A89098", fontSize: "12px", fontWeight: "500" }}>תקציב</span>
@@ -662,7 +664,8 @@ function VendorWidget({
       className="flex flex-col justify-between rounded-[22px] relative cursor-pointer"
       style={{
         backgroundColor: "#FFFFFF",
-        boxShadow: "0 2px 16px rgba(180,120,140,0.10)",
+        boxShadow: "0 4px 20px rgba(201,123,143,0.10)",
+        border: "1.5px solid rgba(201,123,143,0.12)",
         padding: "14px",
         aspectRatio: "1",
         opacity: dimmed ? 0.45 : 1,
