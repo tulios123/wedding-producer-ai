@@ -221,6 +221,7 @@ ${JSON.stringify(slimVendors)}${contextBlock}`;
 interface Message {
   role: "user" | "assistant";
   content: string;
+  vendorNote?: string;
 }
 
 export async function POST(req: NextRequest) {
@@ -233,7 +234,10 @@ export async function POST(req: NextRequest) {
     }: { messages: Message[]; profile: Profile; slots: Slot[]; vendorContext?: VendorContext | null } = await req.json();
 
     if (!Array.isArray(messages)) throw new Error("messages must be an array");
-    const apiMessages = messages.map(({ role, content }) => ({ role, content }));
+    const apiMessages = messages.map(({ role, content, vendorNote }) => ({
+      role,
+      content: vendorNote ? `[שאלה על ${vendorNote}] ${content}` : content,
+    }));
 
     const reqBody = JSON.stringify({
       model: "claude-haiku-4-5-20251001",
