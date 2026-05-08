@@ -87,7 +87,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
   return (
     <div
       className="fixed inset-0 overflow-y-auto"
-      style={{ backgroundColor: "#0F0A1A", direction: "rtl" }}
+      style={{ backgroundColor: "#FBF6F2", direction: "rtl" }}
     >
       {/* Ambient glow */}
       <div
@@ -98,7 +98,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           transform: "translate(-50%, -50%)",
           width: "700px",
           height: "700px",
-          background: "radial-gradient(circle, rgba(232,168,124,0.10) 0%, transparent 65%)",
+          background: "radial-gradient(circle, rgba(201,123,143,0.10) 0%, transparent 65%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -130,7 +130,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
             style={{
               fontSize: "clamp(32px, 6vw, 48px)",
               fontWeight: "400",
-              color: "#F5F0E8",
+              color: "#1A0F14",
               lineHeight: 1.15,
               marginBottom: "12px",
               fontFamily: "'DM Serif Display', serif",
@@ -138,7 +138,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           >
             תכננו את החתונה שלכם
           </h1>
-          <p style={{ color: "#7A7280", fontSize: "18px", lineHeight: 1.5, margin: 0 }}>
+          <p style={{ color: "#A89098", fontSize: "18px", lineHeight: 1.5, margin: 0 }}>
             המפיק שלכם כאן לעזור — שאלו הכל
           </p>
         </motion.div>
@@ -147,21 +147,22 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
         <div
           style={{
             width: "100%",
-            backgroundColor: "#1A1428",
-            border: "1px solid rgba(255,255,255,0.09)",
+            backgroundColor: "#FFFFFF",
+            border: "1px solid rgba(180,120,140,0.15)",
             borderRadius: "16px",
             padding: "14px 14px 14px 20px",
             display: "flex",
             flexDirection: "row",
             alignItems: "center",
             gap: "10px",
+            boxShadow: "0 2px 20px rgba(201,123,143,0.10)",
           }}
         >
           <input
             ref={inputRef}
             className="flex-1 bg-transparent outline-none"
             style={{
-              color: "#F5F0E8",
+              color: "#1A0F14",
               fontSize: "15px",
               direction: "rtl",
               fontFamily: "inherit",
@@ -182,7 +183,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
               width: "38px",
               height: "38px",
               borderRadius: "50%",
-              backgroundColor: isLoading ? "rgba(232,168,124,0.4)" : "#E8A87C",
+              backgroundColor: isLoading ? "rgba(201,123,143,0.4)" : "#C97B8F",
               border: "none",
               cursor: isLoading ? "not-allowed" : "pointer",
               display: "flex",
@@ -192,35 +193,33 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
               transition: "background-color 0.2s",
             }}
           >
-            <ArrowUp size={16} style={{ color: "#1A1428" }} />
+            <ArrowUp size={16} style={{ color: "#FFFFFF" }} />
           </button>
         </div>
 
         {/* Skip link + dev reset */}
         <div style={{ marginTop: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
-        {process.env.NODE_ENV !== "production" && (
-          <button
-            onClick={() => {
-              if (window.confirm("איפוס יחזיר הכל למצב התחלתי. בטוח?")) {
-                clearAll();
-                window.location.reload();
-              }
-            }}
-            style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              width: "28px", height: "28px", borderRadius: "50%",
-              backgroundColor: "rgba(255,255,255,0.06)",
-              border: "1px solid rgba(255,255,255,0.10)",
-              cursor: "pointer", flexShrink: 0,
-            }}
-          >
-            <RotateCcw size={13} style={{ color: "#7A7280" }} />
-          </button>
-        )}
+        <button
+          onClick={() => {
+            if (window.confirm("איפוס יחזיר הכל למצב התחלתי. בטוח?")) {
+              clearAll();
+              window.location.reload();
+            }
+          }}
+          style={{
+            display: "flex", alignItems: "center", justifyContent: "center",
+            width: "28px", height: "28px", borderRadius: "50%",
+            backgroundColor: "rgba(180,120,140,0.10)",
+            border: "1px solid rgba(180,120,140,0.15)",
+            cursor: "pointer", flexShrink: 0,
+          }}
+        >
+          <RotateCcw size={13} style={{ color: "#A89098" }} />
+        </button>
         <button
           onClick={() => onNavigate("dashboard")}
           style={{
-            color: "#6B6478",
+            color: "#A89098",
             fontSize: "13px",
             background: "none",
             border: "none",
@@ -252,12 +251,13 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
                   <div
                     style={{
                       maxWidth: "84%",
-                      backgroundColor: "#1A1428",
+                      backgroundColor: "#FFFFFF",
                       borderRadius: "16px 16px 4px 16px",
                       padding: "11px 14px",
-                      color: "#F5F0E8",
+                      color: "#1A0F14",
                       fontSize: "14px",
                       lineHeight: 1.6,
+                      boxShadow: "0 1px 8px rgba(180,120,140,0.08)",
                     }}
                     dangerouslySetInnerHTML={{ __html: renderMessage(msg.content) }}
                   />
@@ -287,11 +287,11 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
                 <div key={i} style={{ alignSelf: "flex-end", maxWidth: "84%" }}>
                   <div
                     style={{
-                      backgroundColor: "rgba(232,168,124,0.10)",
-                      border: "1px solid rgba(232,168,124,0.22)",
+                      backgroundColor: "rgba(201,123,143,0.10)",
+                      border: "1px solid rgba(201,123,143,0.20)",
                       borderRadius: "16px 16px 16px 4px",
                       padding: "11px 14px",
-                      color: "#F5F0E8",
+                      color: "#1A0F14",
                       fontSize: "14px",
                       lineHeight: 1.6,
                     }}
@@ -306,12 +306,13 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
               <div style={{ alignSelf: "flex-start" }}>
                 <div
                   style={{
-                    backgroundColor: "#1A1428",
+                    backgroundColor: "#FFFFFF",
                     borderRadius: "16px 16px 4px 16px",
                     padding: "14px 16px",
                     display: "flex",
                     gap: "4px",
                     alignItems: "center",
+                    boxShadow: "0 1px 8px rgba(180,120,140,0.08)",
                   }}
                 >
                   {[0, 150, 300].map((delay) => (
@@ -322,7 +323,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
                         width: "6px",
                         height: "6px",
                         borderRadius: "50%",
-                        backgroundColor: "#E8A87C",
+                        backgroundColor: "#C97B8F",
                         animation: "dotPulse 1s ease-in-out infinite",
                         animationDelay: `${delay}ms`,
                       }}

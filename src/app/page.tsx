@@ -30,11 +30,11 @@ const SLOT_ICONS: Record<string, LucideIcon> = {
 };
 
 const statusConfig: Record<SlotStatus, { label: string; color: string; bg: string }> = {
-  idle:        { label: "לא טופל", color: "#6B6478", bg: "rgba(107,100,120,0.12)" },
-  collecting:  { label: "אוספים",  color: "#B8A4D9", bg: "rgba(184,164,217,0.12)" },
-  negotiating: { label: 'במו"מ',   color: "#E8A87C", bg: "rgba(232,168,124,0.12)" },
-  hold:        { label: "Hold",    color: "#D4A574", bg: "rgba(212,180,150,0.12)" },
-  signed:      { label: "חתום",    color: "#8FBC8F", bg: "rgba(143,188,143,0.12)" },
+  idle:        { label: "לא טופל", color: "#9B8A95", bg: "rgba(155,138,149,0.10)" },
+  collecting:  { label: "אוספים",  color: "#7B8EC4", bg: "rgba(123,142,196,0.10)" },
+  negotiating: { label: 'במו"מ',   color: "#C97B8F", bg: "rgba(201,123,143,0.10)" },
+  hold:        { label: "Hold",    color: "#B8884A", bg: "rgba(184,136,74,0.10)"  },
+  signed:      { label: "חתום",    color: "#6BA882", bg: "rgba(107,168,130,0.10)" },
 };
 
 const INITIAL_SLOTS: Slot[] = [
@@ -233,7 +233,7 @@ export default function Home() {
 
       <motion.div
         className="flex flex-col h-screen w-full"
-        style={{ backgroundColor: "#100C1C" }}
+        style={{ backgroundColor: "#FBF6F2" }}
         animate={{ opacity: chatOpen ? 0.3 : 1 }}
         transition={{ duration: 0.25 }}
       >
@@ -244,8 +244,8 @@ export default function Home() {
             {/* Header */}
             <div className="flex flex-row items-center justify-between px-4" style={{ paddingTop: "16px", paddingBottom: "8px" }}>
               <div className="flex flex-col">
-                <span style={{ color: "rgba(245,240,232,0.35)", fontSize: "11px", letterSpacing: "0.04em" }}>AI Wedding Producer</span>
-                <span className="font-bold" style={{ color: "#F5F0E8", fontSize: "20px", letterSpacing: "-0.3px" }}>
+                <span style={{ color: "#A89098", fontSize: "11px", letterSpacing: "0.04em" }}>AI Wedding Producer</span>
+                <span className="font-bold" style={{ color: "#1A0F14", fontSize: "20px", letterSpacing: "-0.3px" }}>
                   {greetingName ? `${greetingName}` : "שלום!"}
                 </span>
               </div>
@@ -259,14 +259,14 @@ export default function Home() {
                       }
                     }}
                     className="flex items-center justify-center rounded-full flex-shrink-0"
-                    style={{ width: "30px", height: "30px", backgroundColor: "rgba(255,255,255,0.06)", border: "none", cursor: "pointer" }}
+                    style={{ width: "30px", height: "30px", backgroundColor: "rgba(180,120,140,0.10)", border: "none", cursor: "pointer" }}
                   >
-                    <RotateCcw size={13} style={{ color: "rgba(245,240,232,0.3)" }} />
+                    <RotateCcw size={13} style={{ color: "#A89098" }} />
                   </button>
                 )}
                 <div
                   className="flex items-center justify-center rounded-full font-bold text-sm flex-shrink-0"
-                  style={{ width: "34px", height: "34px", backgroundColor: "#E8A87C", color: "#1A1428", fontSize: "13px" }}
+                  style={{ width: "34px", height: "34px", backgroundColor: "#C97B8F", color: "#FFFFFF", fontSize: "13px" }}
                 >
                   {profile.partner1 ? profile.partner1[0].toUpperCase() : "?"}
                 </div>
@@ -280,8 +280,8 @@ export default function Home() {
               <div
                 className="col-span-2 rounded-[22px] relative overflow-hidden"
                 style={{
-                  backgroundColor: "#1C1828",
-                  boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
+                  background: "linear-gradient(135deg, #FFF0F4 0%, #FBF6F2 55%, #FFF8EE 100%)",
+                  boxShadow: "0 2px 20px rgba(201,123,143,0.14)",
                   padding: "18px 18px 16px",
                   minHeight: "130px",
                   display: "flex",
@@ -291,12 +291,12 @@ export default function Home() {
               >
                 {/* top row */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <span style={{ color: "rgba(245,240,232,0.4)", fontSize: "12px", fontWeight: "500" }}>
+                  <span style={{ color: "#A89098", fontSize: "12px", fontWeight: "500" }}>
                     {dateDisplay.kind === "countdown" ? "ימים לחתונה" : "מועד החתונה"}
                   </span>
                   {profile.partner1 && profile.partner2 && (
                     <span style={{
-                      backgroundColor: "rgba(232,168,124,0.15)", color: "#E8A87C",
+                      backgroundColor: "rgba(201,123,143,0.12)", color: "#C97B8F",
                       fontSize: "11px", fontWeight: "600", padding: "3px 10px", borderRadius: "20px",
                     }}>
                       {profile.partner1} & {profile.partner2}
@@ -309,27 +309,27 @@ export default function Home() {
                   <div style={{ display: "flex", alignItems: "flex-end", gap: "6px" }}>
                     <span style={{
                       fontSize: "80px", fontWeight: "800", lineHeight: 1, letterSpacing: "-4px",
-                      color: "#F5F0E8",
+                      color: "#C97B8F",
                     }}>
                       {dateDisplay.days}
                     </span>
-                    <span style={{ color: "rgba(245,240,232,0.5)", fontSize: "22px", fontWeight: "300", paddingBottom: "10px" }}>
+                    <span style={{ color: "#D4A0B0", fontSize: "22px", fontWeight: "300", paddingBottom: "10px" }}>
                       ימים
                     </span>
                   </div>
                 ) : dateDisplay.kind === "freetext" ? (
-                  <p style={{ fontSize: "40px", fontWeight: "800", letterSpacing: "-1px", color: "#F5F0E8", lineHeight: 1.1 }}>
+                  <p style={{ fontSize: "40px", fontWeight: "800", letterSpacing: "-1px", color: "#1A0F14", lineHeight: 1.1 }}>
                     {dateDisplay.text}
                   </p>
                 ) : dateDisplay.kind === "past" ? (
-                  <p style={{ fontSize: "26px", fontWeight: "700", color: "#E8A87C" }}>בדוק את התאריך</p>
+                  <p style={{ fontSize: "26px", fontWeight: "700", color: "#C97B8F" }}>בדוק את התאריך</p>
                 ) : (
-                  <p style={{ fontSize: "22px", fontWeight: "600", color: "rgba(245,240,232,0.55)" }}>תאריך לא נקבע</p>
+                  <p style={{ fontSize: "22px", fontWeight: "600", color: "#A89098" }}>תאריך לא נקבע</p>
                 )}
 
                 {/* bottom row */}
                 {dateDisplay.kind === "countdown" && (
-                  <span style={{ color: "rgba(245,240,232,0.3)", fontSize: "12px" }}>{dateDisplay.formatted}</span>
+                  <span style={{ color: "#B8A0A8", fontSize: "12px" }}>{dateDisplay.formatted}</span>
                 )}
               </div>
 
@@ -347,19 +347,19 @@ export default function Home() {
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }
-                    : { backgroundColor: "#1C1828" }),
+                    : { backgroundColor: "#FFFFFF" }),
                 }}
                 onClick={() => setOpenSlotId("venue")}
               >
                 {venueSlot?.vendor && (
-                  <div className="absolute inset-0" style={{ background: "linear-gradient(to left, rgba(8,4,16,0.95) 0%, rgba(8,4,16,0.7) 60%, rgba(8,4,16,0.25) 100%)", pointerEvents: "none" }} />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to left, rgba(26,15,20,0.88) 0%, rgba(26,15,20,0.55) 55%, rgba(26,15,20,0.15) 100%)", pointerEvents: "none" }} />
                 )}
                 <div className="flex items-center justify-center rounded-full flex-shrink-0 relative" style={{ width: "40px", height: "40px", backgroundColor: venueCfg.bg }}>
                   <Building2 size={18} style={{ color: venueCfg.color }} />
                 </div>
                 <div className="flex flex-col flex-1 relative">
-                  <span style={{ color: "rgba(245,240,232,0.4)", fontSize: "11px", fontWeight: "500" }}>מקום</span>
-                  <span style={{ color: "#F5F0E8", fontSize: "16px", fontWeight: "600", letterSpacing: "-0.2px" }}>
+                  <span style={{ color: venueSlot?.vendor ? "rgba(255,255,255,0.5)" : "#A89098", fontSize: "11px", fontWeight: "500" }}>מקום</span>
+                  <span style={{ color: venueSlot?.vendor ? "#FFFFFF" : "#1A0F14", fontSize: "16px", fontWeight: "600", letterSpacing: "-0.2px" }}>
                     {venueSlot?.vendor ?? "בוא נדבר על מקום"}
                   </span>
                 </div>
@@ -400,8 +400,8 @@ export default function Home() {
                     style={{
                       flex: 1,
                       aspectRatio: "1",
-                      backgroundColor: "#1C1828",
-                      boxShadow: expandedSection === "favorites" ? "0 0 0 2px rgba(232,168,124,0.5), 0 2px 12px rgba(0,0,0,0.45)" : "0 2px 12px rgba(0,0,0,0.45)",
+                      backgroundColor: "#FFFFFF",
+                      boxShadow: expandedSection === "favorites" ? "0 0 0 2px rgba(201,123,143,0.45), 0 2px 16px rgba(201,123,143,0.12)" : "0 2px 16px rgba(180,120,140,0.10)",
                       borderRadius: "22px",
                       padding: "14px",
                       cursor: "pointer",
@@ -415,24 +415,24 @@ export default function Home() {
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <span style={{ color: "#7A7280", fontSize: "11px", fontWeight: 600 }}>שמורים</span>
+                      <span style={{ color: "#A89098", fontSize: "11px", fontWeight: 600 }}>שמורים</span>
                       <Heart
                         size={14}
                         fill={favorites.length > 0 ? "currentColor" : "none"}
-                        style={{ color: expandedSection === "favorites" ? "#E8A87C" : favorites.length > 0 ? "#E8A87C" : "#7A7280" }}
+                        style={{ color: expandedSection === "favorites" ? "#C97B8F" : favorites.length > 0 ? "#C97B8F" : "#A89098" }}
                       />
                     </div>
                     <div>
-                      <span style={{ color: "#F5F0E8", fontSize: "30px", fontWeight: "700", lineHeight: 1, display: "block" }}>
+                      <span style={{ color: "#1A0F14", fontSize: "30px", fontWeight: "700", lineHeight: 1, display: "block" }}>
                         {favorites.length}
                       </span>
-                      <span style={{ color: "#7A7280", fontSize: "12px" }}>ספקים שמורים</span>
+                      <span style={{ color: "#A89098", fontSize: "12px" }}>ספקים שמורים</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
                       <ChevronDown
                         size={14}
                         style={{
-                          color: "#7A7280",
+                          color: "#A89098",
                           transform: expandedSection === "favorites" ? "rotate(180deg)" : "rotate(0deg)",
                           transition: "transform 0.25s",
                         }}
@@ -461,20 +461,20 @@ export default function Home() {
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                      <span style={{ color: "#7A7280", fontSize: "11px", fontWeight: 600 }}>ספקים</span>
-                      <Store size={14} style={{ color: expandedSection === "vendors" ? "#E8A87C" : "#7A7280" }} />
+                      <span style={{ color: "#A89098", fontSize: "11px", fontWeight: 600 }}>ספקים</span>
+                      <Store size={14} style={{ color: expandedSection === "vendors" ? "#C97B8F" : "#A89098" }} />
                     </div>
                     <div>
-                      <span style={{ color: "#F5F0E8", fontSize: "30px", fontWeight: "700", lineHeight: 1, display: "block" }}>
+                      <span style={{ color: "#1A0F14", fontSize: "30px", fontWeight: "700", lineHeight: 1, display: "block" }}>
                         {vendorsData.vendors.length}
                       </span>
-                      <span style={{ color: "#7A7280", fontSize: "12px" }}>ספקים זמינים</span>
+                      <span style={{ color: "#A89098", fontSize: "12px" }}>ספקים זמינים</span>
                     </div>
                     <div style={{ display: "flex", justifyContent: "flex-end" }}>
                       <ChevronDown
                         size={14}
                         style={{
-                          color: "#7A7280",
+                          color: "#A89098",
                           transform: expandedSection === "vendors" ? "rotate(180deg)" : "rotate(0deg)",
                           transition: "transform 0.25s",
                         }}
@@ -496,8 +496,8 @@ export default function Home() {
                     >
                       <div style={{ paddingTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
                         {favorites.length === 0 ? (
-                          <div style={{ padding: "20px 16px", backgroundColor: "#1A1428", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.11)", textAlign: "center" }}>
-                            <p style={{ color: "#6B6478", fontSize: "13px" }}>לחצו על ❤️ בכרטיס ספק כדי לשמור אותו כאן</p>
+                          <div style={{ padding: "20px 16px", backgroundColor: "#FFFFFF", borderRadius: "16px", border: "1px solid rgba(180,120,140,0.12)", textAlign: "center" }}>
+                            <p style={{ color: "#A89098", fontSize: "13px" }}>לחצו על ❤️ בכרטיס ספק כדי לשמור אותו כאן</p>
                           </div>
                         ) : (
                           favorites.map((id) => (
@@ -530,7 +530,7 @@ export default function Home() {
                           const catVendors = vendorsData.vendors.filter((v) => v.category === cat);
                           return (
                             <div key={cat}>
-                              <p style={{ color: "#7A7280", fontSize: "11px", marginBottom: "8px" }}>{catLabel}</p>
+                              <p style={{ color: "#A89098", fontSize: "11px", marginBottom: "8px" }}>{catLabel}</p>
                               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                                 {catVendors.map((v) => (
                                   <VendorCard
@@ -555,12 +555,12 @@ export default function Home() {
               {/* Budget Widget */}
               <div
                 className="col-span-2 rounded-[22px]"
-                style={{ backgroundColor: "#1C1828", boxShadow: "0 2px 16px rgba(0,0,0,0.5)", padding: "16px" }}
+                style={{ backgroundColor: "#FFFFFF", boxShadow: "0 2px 16px rgba(180,120,140,0.10)", padding: "16px" }}
               >
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
-                  <span style={{ color: "rgba(245,240,232,0.4)", fontSize: "12px", fontWeight: "500" }}>תקציב</span>
+                  <span style={{ color: "#A89098", fontSize: "12px", fontWeight: "500" }}>תקציב</span>
                   {totalBudget > 0 && (
-                    <span style={{ color: "rgba(245,240,232,0.35)", fontSize: "12px" }}>
+                    <span style={{ color: "#A89098", fontSize: "12px" }}>
                       ₪{totalBudget.toLocaleString()}
                     </span>
                   )}
@@ -569,24 +569,24 @@ export default function Home() {
                   <>
                     <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
                       {[
-                        { label: "הוצאה",  value: totalSpent,  color: "#E8A87C", bg: "rgba(232,168,124,0.10)" },
-                        { label: "נותר",   value: remaining,   color: "#8FBC8F", bg: "rgba(143,188,143,0.10)" },
+                        { label: "הוצאה",  value: totalSpent,  color: "#C97B8F", bg: "rgba(201,123,143,0.08)" },
+                        { label: "נותר",   value: remaining,   color: "#6BA882", bg: "rgba(107,168,130,0.08)" },
                       ].map(({ label, value, color, bg }) => (
                         <div key={label} style={{ flex: 1, backgroundColor: bg, borderRadius: "14px", padding: "12px 14px" }}>
-                          <p style={{ color: "rgba(245,240,232,0.4)", fontSize: "11px", marginBottom: "4px" }}>{label}</p>
+                          <p style={{ color: "#A89098", fontSize: "11px", marginBottom: "4px" }}>{label}</p>
                           <p style={{ color, fontSize: "20px", fontWeight: "700", letterSpacing: "-0.5px" }}>
                             ₪{value >= 1000 ? `${Math.round(value / 1000)}K` : value.toLocaleString()}
                           </p>
                         </div>
                       ))}
                     </div>
-                    <div className="rounded-full" style={{ height: "4px", backgroundColor: "rgba(255,255,255,0.08)" }}>
-                      <div className="rounded-full" style={{ width: `${pct}%`, height: "100%", backgroundColor: "#E8A87C", transition: "width 0.6s ease" }} />
+                    <div className="rounded-full" style={{ height: "4px", backgroundColor: "rgba(180,120,140,0.12)" }}>
+                      <div className="rounded-full" style={{ width: `${pct}%`, height: "100%", backgroundColor: "#C97B8F", transition: "width 0.6s ease" }} />
                     </div>
-                    <p style={{ color: "rgba(245,240,232,0.25)", fontSize: "11px", marginTop: "6px" }}>{pct}% נוצל</p>
+                    <p style={{ color: "#B8A0A8", fontSize: "11px", marginTop: "6px" }}>{pct}% נוצל</p>
                   </>
                 ) : (
-                  <p style={{ color: "rgba(245,240,232,0.3)", fontSize: "14px" }}>תקציב יוגדר בשיחה</p>
+                  <p style={{ color: "#A89098", fontSize: "14px" }}>תקציב יוגדר בשיחה</p>
                 )}
               </div>
             </div>
@@ -599,15 +599,15 @@ export default function Home() {
               padding: "10px 12px 28px",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
-              background: "rgba(16,12,28,0.85)",
+              background: "rgba(251,246,242,0.92)",
             }}
           >
             <div
               className="flex flex-row items-center rounded-[18px] cursor-pointer"
               style={{
                 height: "52px",
-                backgroundColor: "#1C1828",
-                boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
+                backgroundColor: "#FFFFFF",
+                boxShadow: "0 2px 20px rgba(201,123,143,0.14)",
                 gap: "10px",
                 paddingLeft: "8px",
                 paddingRight: "8px",
@@ -615,16 +615,16 @@ export default function Home() {
               onClick={() => setChatOpen(true)}
             >
               <div style={{ position: "relative", flexShrink: 0 }}>
-                <div className="flex items-center justify-center rounded-full" style={{ width: "36px", height: "36px", backgroundColor: "#E8A87C" }}>
-                  <Sparkles size={14} style={{ color: "#1A1428" }} />
+                <div className="flex items-center justify-center rounded-full" style={{ width: "36px", height: "36px", backgroundColor: "#C97B8F" }}>
+                  <Sparkles size={14} style={{ color: "#FFFFFF" }} />
                 </div>
-                <div style={{ position: "absolute", bottom: "0", right: "0", width: "9px", height: "9px", borderRadius: "50%", backgroundColor: "#8FBC8F", border: "1.5px solid #1C1828" }} />
+                <div style={{ position: "absolute", bottom: "0", right: "0", width: "9px", height: "9px", borderRadius: "50%", backgroundColor: "#6BA882", border: "1.5px solid #FFFFFF" }} />
               </div>
-              <span className="flex-1 text-sm" style={{ color: "rgba(245,240,232,0.35)", letterSpacing: "-0.1px" }}>
+              <span className="flex-1 text-sm" style={{ color: "#A89098", letterSpacing: "-0.1px" }}>
                 שאל את הסוכן...
               </span>
-              <div className="flex items-center justify-center rounded-[12px] flex-shrink-0" style={{ width: "36px", height: "36px", backgroundColor: "#E8A87C" }}>
-                <ArrowUp size={15} style={{ color: "#1A1428" }} />
+              <div className="flex items-center justify-center rounded-[12px] flex-shrink-0" style={{ width: "36px", height: "36px", backgroundColor: "#C97B8F" }}>
+                <ArrowUp size={15} style={{ color: "#FFFFFF" }} />
               </div>
             </div>
           </div>
@@ -661,8 +661,8 @@ function VendorWidget({
     <div
       className="flex flex-col justify-between rounded-[22px] relative cursor-pointer"
       style={{
-        backgroundColor: "#1C1828",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.45)",
+        backgroundColor: "#FFFFFF",
+        boxShadow: "0 2px 16px rgba(180,120,140,0.10)",
         padding: "14px",
         aspectRatio: "1",
         opacity: dimmed ? 0.45 : 1,
@@ -678,8 +678,8 @@ function VendorWidget({
         </span>
       </div>
       <div className="flex flex-col">
-        <span style={{ color: "#F5F0E8", fontSize: "14px", fontWeight: "600", letterSpacing: "-0.2px" }}>{name}</span>
-        <span style={{ color: "rgba(245,240,232,0.35)", fontSize: "11px", marginTop: "2px" }}>{sub}</span>
+        <span style={{ color: "#1A0F14", fontSize: "14px", fontWeight: "600", letterSpacing: "-0.2px" }}>{name}</span>
+        <span style={{ color: "#A89098", fontSize: "11px", marginTop: "2px" }}>{sub}</span>
       </div>
     </div>
   );
