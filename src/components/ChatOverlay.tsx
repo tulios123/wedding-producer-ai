@@ -19,6 +19,7 @@ interface ChatOverlayProps {
   mode?: 'welcome' | 'overlay';
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
+  onVendorTap?: (vendorId: string) => void;
   initialInput?: string;
   autoSend?: boolean;
   onInitialInputConsumed?: () => void;
@@ -32,7 +33,7 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, initialInput, autoSend, onInitialInputConsumed, vendorContext }: ChatOverlayProps) {
+export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, onVendorTap, initialInput, autoSend, onInitialInputConsumed, vendorContext }: ChatOverlayProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -205,10 +206,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                         <VendorCard
                           key={id}
                           vendorId={id}
-                          onTap={() => {
-                            const vendor = vendorsData.vendors.find((v) => v.id === id);
-                            if (vendor) sendMessage(`ספר לי עוד על ${vendor.name}`);
-                          }}
+                          onTap={() => onVendorTap?.(id)}
                           onHeartClick={() => onToggleFavorite?.(id)}
                           isFavorite={favorites.includes(id)}
                         />

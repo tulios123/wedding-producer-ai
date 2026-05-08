@@ -228,6 +228,7 @@ export default function Home() {
         slots={slots}
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
+        onVendorTap={(id) => setSelectedVendorId(id)}
         initialInput={chatInitialInput}
         autoSend={chatAutoSend}
         onInitialInputConsumed={() => { setChatInitialInput(""); setChatAutoSend(false); }}

@@ -28,7 +28,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
       {vendor && (
         <>
           <motion.div
-            className="fixed inset-0 z-40"
+            className="fixed inset-0 z-[55]"
             style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -36,7 +36,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
             onClick={onClose}
           />
           <motion.div
-            className="fixed bottom-0 left-0 right-0 z-50 rounded-t-3xl"
+            className="fixed bottom-0 left-0 right-0 z-[60] rounded-t-3xl"
             style={{
               maxWidth: '430px',
               margin: '0 auto',
@@ -50,7 +50,16 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            drag="y"
+            dragConstraints={{ top: 0 }}
+            dragElastic={{ top: 0, bottom: 0.4 }}
+            onDragEnd={(_, info) => { if (info.offset.y > 80) onClose(); }}
           >
+            {/* Drag handle */}
+            <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '10px', paddingBottom: '2px', flexShrink: 0 }}>
+              <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'rgba(255,255,255,0.18)' }} />
+            </div>
+
             <div className="overflow-y-auto">
               {/* Image */}
               <div className="relative w-full flex-shrink-0" style={{ height: '220px' }}>
