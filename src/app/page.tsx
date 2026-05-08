@@ -111,6 +111,16 @@ export default function Home() {
     setChatOpen(true);
   }
 
+  function handleVendorCardChat(text: string, vendorId: string) {
+    const v = vendorsData.vendors.find((v) => v.id === vendorId);
+    if (!v) return;
+    const CAT: Record<string, string> = { venue: "מקום", catering: "קייטרינג", photography: "צילום" };
+    setChatVendorContext({ slotLabel: CAT[v.category] ?? v.category, vendorName: v.name });
+    setChatInitialInput(text);
+    setChatAutoSend(true);
+    setChatOpen(true);
+  }
+
 
   const handleUpdate = (update: UpdateTag) => {
     if (update.type === "slot") {
@@ -490,6 +500,7 @@ export default function Home() {
                               onTap={() => setSelectedVendorId(id)}
                               onHeartClick={() => toggleFavorite(id)}
                               isFavorite={true}
+                              onChatSend={handleVendorCardChat}
                             />
                           ))
                         )}
@@ -521,6 +532,7 @@ export default function Home() {
                                     onTap={() => setSelectedVendorId(v.id)}
                                     onHeartClick={() => toggleFavorite(v.id)}
                                     isFavorite={favorites.includes(v.id)}
+                                    onChatSend={handleVendorCardChat}
                                   />
                                 ))}
                               </div>
