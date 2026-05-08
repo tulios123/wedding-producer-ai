@@ -115,7 +115,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       {isOpen && (
         <motion.div
           className="fixed inset-0 z-50 flex flex-col"
-          style={{ backgroundColor: "#0F0A1A" }}
+          style={{ backgroundColor: "#FBF6F2" }}
           initial={{ y: mode === 'welcome' ? 0 : "100%" }}
           animate={{ y: 0 }}
           exit={{ y: mode === 'welcome' ? 0 : "100%" }}
@@ -126,7 +126,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
             className="flex-shrink-0 flex flex-row items-center gap-2.5"
             style={{
               padding: "14px 16px",
-              borderBottom: "1px solid rgba(255,255,255,0.08)",
+              borderBottom: "1px solid rgba(180,120,140,0.12)",
             }}
           >
             {mode === 'welcome' ? (
@@ -136,10 +136,10 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                 style={{
                   height: "32px",
                   padding: "0 12px",
-                  backgroundColor: "rgba(255,255,255,0.06)",
-                  border: "1px solid rgba(255,255,255,0.12)",
+                  backgroundColor: "rgba(180,120,140,0.08)",
+                  border: "1px solid rgba(180,120,140,0.12)",
                   cursor: "pointer",
-                  color: "#B8B0A8",
+                  color: "#7A5060",
                   fontSize: "12px",
                   whiteSpace: "nowrap",
                 }}
@@ -153,17 +153,17 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                 style={{
                   width: "32px",
                   height: "32px",
-                  backgroundColor: "rgba(255,255,255,0.08)",
+                  backgroundColor: "rgba(180,120,140,0.10)",
                   border: "none",
                   cursor: "pointer",
                 }}
               >
-                <ChevronDown size={18} style={{ color: "#F5F0E8" }} />
+                <ChevronDown size={18} style={{ color: "#1A0F14" }} />
               </button>
             )}
 
             <div className="flex flex-col flex-1 items-center">
-              <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "14px" }}>
+              <span className="font-semibold" style={{ color: "#1A0F14", fontSize: "14px" }}>
                 מפיק החתונה
               </span>
               <div className="flex flex-row items-center gap-1">
@@ -180,8 +180,8 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
               style={{
                 width: "32px",
                 height: "32px",
-                backgroundColor: "#E8A87C",
-                color: "#1A1428",
+                backgroundColor: "#C97B8F",
+                color: "#FFFFFF",
                 fontSize: "14px",
               }}
             >
@@ -201,10 +201,11 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                     className="text-sm leading-relaxed"
                     style={{
                       maxWidth: "84%",
-                      backgroundColor: "#1A1428",
+                      backgroundColor: "#FFFFFF",
                       borderRadius: "16px 16px 4px 16px",
                       padding: "11px 14px",
-                      color: "#F5F0E8",
+                      color: "#1A0F14",
+                      boxShadow: "0 1px 4px rgba(180,120,140,0.10)",
                     }}
                     dangerouslySetInnerHTML={{ __html: renderMessage(msg.content) }}
                   />
@@ -241,11 +242,11 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                   <div
                     className="text-sm leading-relaxed"
                     style={{
-                      backgroundColor: "rgba(232,168,124,0.10)",
-                      border: "1px solid rgba(232,168,124,0.22)",
+                      backgroundColor: "rgba(201,123,143,0.10)",
+                      border: "1px solid rgba(201,123,143,0.22)",
                       borderRadius: "16px 16px 16px 4px",
                       padding: "11px 14px",
-                      color: "#F5F0E8",
+                      color: "#1A0F14",
                     }}
                   >
                     {msg.content}
@@ -260,9 +261,10 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                 <div
                   className="flex flex-row items-center gap-1"
                   style={{
-                    backgroundColor: "#1A1428",
+                    backgroundColor: "#FFFFFF",
                     borderRadius: "16px 16px 4px 16px",
                     padding: "14px 16px",
+                    boxShadow: "0 1px 4px rgba(180,120,140,0.10)",
                   }}
                 >
                   {[0, 150, 300].map((delay) => (
@@ -273,7 +275,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                         width: "6px",
                         height: "6px",
                         borderRadius: "50%",
-                        backgroundColor: "#E8A87C",
+                        backgroundColor: "#C97B8F",
                         animation: "dotPulse 1s ease-in-out infinite",
                         animationDelay: `${delay}ms`,
                       }}
@@ -291,14 +293,14 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
             className="flex-shrink-0"
             style={{
               padding: "10px 12px 20px",
-              borderTop: "1px solid rgba(255,255,255,0.07)",
+              borderTop: "1px solid rgba(180,120,140,0.12)",
             }}
           >
             <div
               className="flex flex-row items-center gap-2 rounded-full transition-colors"
               style={{
-                backgroundColor: "#1A1428",
-                border: "1px solid rgba(255,255,255,0.09)",
+                backgroundColor: "#FFFFFF",
+                border: "1px solid rgba(180,120,140,0.14)",
                 paddingLeft: "16px",
                 paddingRight: "8px",
                 paddingTop: "8px",
@@ -306,18 +308,18 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
               }}
               onFocusCapture={(e) => {
                 (e.currentTarget as HTMLDivElement).style.border =
-                  "1px solid rgba(232,168,124,0.30)";
+                  "1px solid rgba(201,123,143,0.40)";
               }}
               onBlurCapture={(e) => {
                 (e.currentTarget as HTMLDivElement).style.border =
-                  "1px solid rgba(255,255,255,0.09)";
+                  "1px solid rgba(180,120,140,0.14)";
               }}
             >
               <input
                 ref={inputRef}
                 className="flex-1 bg-transparent text-sm outline-none"
                 style={{
-                  color: "#F5F0E8",
+                  color: "#1A0F14",
                   direction: "rtl",
                   fontFamily: "inherit",
                 }}
@@ -337,13 +339,13 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                 style={{
                   width: "34px",
                   height: "34px",
-                  backgroundColor: isLoading ? "rgba(232,168,124,0.4)" : "#E8A87C",
+                  backgroundColor: isLoading ? "rgba(201,123,143,0.4)" : "#C97B8F",
                   border: "none",
                   cursor: isLoading ? "not-allowed" : "pointer",
                   transition: "background-color 0.2s",
                 }}
               >
-                <ArrowUp size={16} style={{ color: "#1A1428" }} />
+                <ArrowUp size={16} style={{ color: "#FFFFFF" }} />
               </button>
             </div>
           </div>

@@ -43,7 +43,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
           style={{
             maxWidth: '430px',
             margin: '0 auto',
-            backgroundColor: '#0F0A1A',
+            backgroundColor: '#FBF6F2',
             display: 'flex',
             flexDirection: 'column',
             overflow: 'hidden',
@@ -59,7 +59,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
         >
           {/* Drag handle */}
           <div style={{ display: 'flex', justifyContent: 'center', paddingTop: '12px', paddingBottom: '4px', flexShrink: 0 }}>
-            <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'rgba(255,255,255,0.18)' }} />
+            <div style={{ width: '36px', height: '4px', borderRadius: '2px', backgroundColor: 'rgba(180,120,140,0.25)' }} />
           </div>
 
           {/* Scrollable content */}
@@ -97,7 +97,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
                   size={16}
                   fill={isFavorite ? 'currentColor' : 'none'}
                   strokeWidth={1.5}
-                  style={{ color: isFavorite ? '#E8A87C' : 'white' }}
+                  style={{ color: isFavorite ? '#C97B8F' : 'white' }}
                 />
               </button>
             </div>
@@ -107,25 +107,25 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
               <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
                 <span
                   className="rounded-full"
-                  style={{ backgroundColor: 'rgba(232,168,124,0.15)', color: '#E8A87C', fontSize: '11px', padding: '2px 10px', fontWeight: 600 }}
+                  style={{ backgroundColor: 'rgba(201,123,143,0.10)', color: '#C97B8F', fontSize: '11px', padding: '2px 10px', fontWeight: 600 }}
                 >
                   {CATEGORY_LABELS[vendor.category] ?? vendor.category}
                 </span>
-                <span style={{ color: '#7A7280', fontSize: '12px' }}>{vendor.region}</span>
+                <span style={{ color: '#A89098', fontSize: '12px' }}>{vendor.region}</span>
               </div>
 
-              <h2 style={{ color: '#F5F0E8', fontSize: '24px', fontWeight: '700', marginBottom: '8px', lineHeight: 1.2 }}>
+              <h2 style={{ color: '#1A0F14', fontSize: '24px', fontWeight: '700', marginBottom: '8px', lineHeight: 1.2 }}>
                 {vendor.name}
               </h2>
 
-              <p style={{ color: '#B8B0A8', fontSize: '14px', lineHeight: 1.7, marginBottom: '20px' }}>
+              <p style={{ color: '#7A5060', fontSize: '14px', lineHeight: 1.7, marginBottom: '20px' }}>
                 {vendor.description}
               </p>
 
               {/* Price */}
-              <div style={{ marginBottom: '20px', padding: '14px', backgroundColor: 'rgba(232,168,124,0.08)', borderRadius: '14px' }}>
-                <p style={{ color: '#7A7280', fontSize: '11px', marginBottom: '4px' }}>טווח מחיר</p>
-                <p style={{ color: '#E8A87C', fontSize: '20px', fontWeight: '700' }}>
+              <div style={{ marginBottom: '20px', padding: '14px', backgroundColor: 'rgba(201,123,143,0.08)', borderRadius: '14px' }}>
+                <p style={{ color: '#A89098', fontSize: '11px', marginBottom: '4px' }}>טווח מחיר</p>
+                <p style={{ color: '#C97B8F', fontSize: '20px', fontWeight: '700' }}>
                   ₪{vendor.priceRange.min.toLocaleString()} – ₪{vendor.priceRange.max.toLocaleString()}
                 </p>
               </div>
@@ -134,8 +134,8 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
               <div>
                 {vendor.bullets.map((b, i) => (
                   <div key={i} className="flex gap-2" style={{ marginBottom: '12px' }}>
-                    <span style={{ color: '#E8A87C', flexShrink: 0 }}>✓</span>
-                    <span style={{ color: '#B8B0A8', fontSize: '14px', lineHeight: 1.6 }}>{b}</span>
+                    <span style={{ color: '#C97B8F', flexShrink: 0 }}>✓</span>
+                    <span style={{ color: '#7A5060', fontSize: '14px', lineHeight: 1.6 }}>{b}</span>
                   </div>
                 ))}
               </div>
@@ -151,8 +151,8 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
               alignItems: 'center',
               gap: '8px',
               padding: '10px 12px 28px',
-              borderTop: '1px solid rgba(255,255,255,0.07)',
-              backgroundColor: '#0F0A1A',
+              borderTop: '1px solid rgba(180,120,140,0.12)',
+              backgroundColor: '#FBF6F2',
             }}
           >
             <input
@@ -161,11 +161,11 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
               placeholder={vendor ? `שאל על ${vendor.name}...` : 'שאל שאלה...'}
               style={{
                 flex: 1,
-                backgroundColor: '#1A1428',
-                border: '1px solid rgba(255,255,255,0.09)',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid rgba(180,120,140,0.15)',
                 borderRadius: '22px',
                 padding: '10px 16px',
-                color: '#F5F0E8',
+                color: '#1A0F14',
                 fontSize: '14px',
                 direction: 'rtl',
                 fontFamily: 'inherit',
@@ -176,13 +176,13 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
               type="submit"
               style={{
                 width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
-                backgroundColor: input.trim() ? '#E8A87C' : 'rgba(232,168,124,0.15)',
+                backgroundColor: input.trim() ? '#C97B8F' : 'rgba(201,123,143,0.15)',
                 border: 'none', cursor: input.trim() ? 'pointer' : 'default',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 transition: 'background-color 0.15s',
               }}
             >
-              <ArrowUp size={16} style={{ color: input.trim() ? '#1A1428' : 'rgba(232,168,124,0.4)' }} />
+              <ArrowUp size={16} style={{ color: input.trim() ? '#FFFFFF' : 'rgba(201,123,143,0.4)' }} />
             </button>
           </form>}
         </motion.div>

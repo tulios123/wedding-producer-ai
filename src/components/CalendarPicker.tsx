@@ -100,11 +100,11 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
     : null;
 
   return (
-    <div style={{ backgroundColor: '#1C1828', borderRadius: '20px', padding: '16px', direction: 'rtl', width: '100%' }}>
+    <div style={{ backgroundColor: '#FFFFFF', borderRadius: '20px', padding: '16px', direction: 'rtl', width: '100%' }}>
 
       {/* Mode toggle */}
       <div style={{
-        display: 'flex', backgroundColor: 'rgba(255,255,255,0.06)',
+        display: 'flex', backgroundColor: 'rgba(180,120,140,0.08)',
         borderRadius: '12px', padding: '3px', marginBottom: '16px',
       }}>
         {(['single', 'range'] as const).map((m) => (
@@ -115,8 +115,8 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
               flex: 1, padding: '8px 0', border: 'none', cursor: 'pointer',
               borderRadius: '10px', fontSize: '13px', fontWeight: '600',
               transition: 'all 0.2s',
-              backgroundColor: mode === m ? '#E8A87C' : 'transparent',
-              color: mode === m ? '#1A1428' : 'rgba(245,240,232,0.5)',
+              backgroundColor: mode === m ? '#C97B8F' : 'transparent',
+              color: mode === m ? '#FFFFFF' : '#A89098',
             }}
           >
             {m === 'single' ? 'תאריך מדויק' : 'טווח תאריכים'}
@@ -126,20 +126,20 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
 
       {/* Range hint */}
       {mode === 'range' && (
-        <div style={{ textAlign: 'center', color: 'rgba(232,168,124,0.8)', fontSize: '12px', marginBottom: '12px', minHeight: '16px' }}>
+        <div style={{ textAlign: 'center', color: 'rgba(201,123,143,0.9)', fontSize: '12px', marginBottom: '12px', minHeight: '16px' }}>
           {rangeHint}
         </div>
       )}
 
       {/* Month nav */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <button onClick={nextMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#E8A87C', padding: '4px 8px' }}>
+        <button onClick={nextMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C97B8F', padding: '4px 8px' }}>
           <ChevronRight size={18} />
         </button>
-        <span style={{ color: '#F5F0E8', fontSize: '15px', fontWeight: '600' }}>
+        <span style={{ color: '#1A0F14', fontSize: '15px', fontWeight: '600' }}>
           {HE_MONTHS[month]} {year}
         </span>
-        <button onClick={prevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#E8A87C', padding: '4px 8px' }}>
+        <button onClick={prevMonth} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#C97B8F', padding: '4px 8px' }}>
           <ChevronLeft size={18} />
         </button>
       </div>
@@ -147,7 +147,7 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
       {/* Day headers */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', marginBottom: '4px' }}>
         {HE_DAYS.map(d => (
-          <div key={d} style={{ textAlign: 'center', color: 'rgba(245,240,232,0.25)', fontSize: '11px', fontWeight: '600', paddingBottom: '6px' }}>{d}</div>
+          <div key={d} style={{ textAlign: 'center', color: 'rgba(26,15,20,0.25)', fontSize: '11px', fontWeight: '600', paddingBottom: '6px' }}>{d}</div>
         ))}
       </div>
 
@@ -165,8 +165,8 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
               style={{
                 height: '38px', border: 'none', cursor: 'pointer',
                 borderRadius: isInRange ? '0' : '50%',
-                backgroundColor: isEndpoint ? '#E8A87C' : isInRange ? 'rgba(232,168,124,0.15)' : 'transparent',
-                color: isEndpoint ? '#1A1428' : isInRange ? '#E8A87C' : 'rgba(245,240,232,0.8)',
+                backgroundColor: isEndpoint ? '#C97B8F' : isInRange ? 'rgba(201,123,143,0.12)' : 'transparent',
+                color: isEndpoint ? '#FFFFFF' : isInRange ? '#C97B8F' : 'rgba(26,15,20,0.75)',
                 fontSize: '14px', fontWeight: isEndpoint ? '700' : '400',
               }}
             >
@@ -183,8 +183,8 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
           disabled={!canConfirm}
           style={{
             width: '100%', padding: '13px', border: 'none', borderRadius: '14px',
-            backgroundColor: canConfirm ? '#E8A87C' : 'rgba(232,168,124,0.15)',
-            color: canConfirm ? '#1A1428' : 'rgba(232,168,124,0.35)',
+            backgroundColor: canConfirm ? '#C97B8F' : 'rgba(201,123,143,0.15)',
+            color: canConfirm ? '#FFFFFF' : 'rgba(201,123,143,0.45)',
             fontSize: '15px', fontWeight: '700',
             cursor: canConfirm ? 'pointer' : 'default', transition: 'all 0.2s',
           }}
@@ -196,7 +196,7 @@ export function CalendarPicker({ onSelect }: CalendarPickerProps) {
           style={{
             width: '100%', padding: '12px', border: 'none', borderRadius: '14px',
             backgroundColor: 'transparent',
-            color: 'rgba(245,240,232,0.35)',
+            color: '#A89098',
             fontSize: '14px', fontWeight: '500', cursor: 'pointer',
           }}
         >

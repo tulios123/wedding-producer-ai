@@ -21,7 +21,7 @@ export function VendorCard({ vendorId, onTap, onHeartClick, isFavorite }: Vendor
     <div
       onClick={onTap}
       className="relative w-full rounded-2xl overflow-hidden cursor-pointer"
-      style={{ backgroundColor: '#1C1828', boxShadow: '0 2px 12px rgba(0,0,0,0.4)', height: '112px', display: 'flex' }}
+      style={{ backgroundColor: '#FFFFFF', boxShadow: '0 2px 12px rgba(180,120,140,0.10)', height: '112px', display: 'flex' }}
     >
       {/* Image */}
       <div className="relative flex-shrink-0" style={{ width: '38%' }}>
@@ -30,22 +30,22 @@ export function VendorCard({ vendorId, onTap, onHeartClick, isFavorite }: Vendor
         <button
           onClick={(e) => { e.stopPropagation(); onHeartClick(); }}
           className="absolute top-2 left-2 z-10 rounded-full p-1.5"
-          style={{ backgroundColor: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(4px)', border: 'none', cursor: 'pointer' }}
+          style={{ backgroundColor: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', border: 'none', cursor: 'pointer' }}
         >
-          <Heart size={14} fill={isFavorite ? 'currentColor' : 'none'} strokeWidth={1.5} style={{ color: isFavorite ? '#E8A87C' : 'white' }} />
+          <Heart size={14} fill={isFavorite ? 'currentColor' : 'none'} strokeWidth={1.5} style={{ color: isFavorite ? '#C97B8F' : '#1A0F14' }} />
         </button>
       </div>
 
       {/* Info */}
       <div className="flex-1 flex flex-col justify-center" style={{ padding: '12px 14px', direction: 'rtl' }}>
-        <p style={{ color: '#F5F0E8', fontSize: '15px', fontWeight: '600', marginBottom: '6px', letterSpacing: '-0.2px' }}>
+        <p style={{ color: '#1A0F14', fontSize: '15px', fontWeight: '600', marginBottom: '6px', letterSpacing: '-0.2px' }}>
           {vendor.name}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '3px' }}>
           {vendor.bullets.slice(0, 3).map((b, i) => (
             <div key={i} style={{ display: 'flex', gap: '6px', alignItems: 'flex-start' }}>
-              <span style={{ color: '#E8A87C', fontSize: '11px', flexShrink: 0, marginTop: '1px' }}>•</span>
-              <span style={{ color: 'rgba(245,240,232,0.5)', fontSize: '11px', lineHeight: 1.4 }}>{b}</span>
+              <span style={{ color: '#C97B8F', fontSize: '11px', flexShrink: 0, marginTop: '1px' }}>•</span>
+              <span style={{ color: '#7A5060', fontSize: '11px', lineHeight: 1.4 }}>{b}</span>
             </div>
           ))}
         </div>
