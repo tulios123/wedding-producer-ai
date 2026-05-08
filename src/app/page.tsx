@@ -317,38 +317,43 @@ export default function Home() {
               <div
                 className="col-span-2 rounded-3xl relative overflow-hidden"
                 style={{
-                  backgroundColor: "#1A1428",
-                  border: "1px solid rgba(255,255,255,0.11)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                  padding: "20px",
+                  background: "linear-gradient(145deg, #1F1535 0%, #160E2B 60%, #1A1428 100%)",
+                  border: "1px solid rgba(255,255,255,0.10)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.35)",
+                  padding: "22px 20px 20px",
                 }}
               >
-                {/* Glow overlay */}
+                {/* Dot grid texture */}
                 <div style={{
-                  position: "absolute",
-                  top: "-60px",
-                  right: "-60px",
-                  width: "250px",
-                  height: "250px",
-                  background: "radial-gradient(circle, rgba(232,168,124,0.12) 0%, transparent 70%)",
+                  position: "absolute", inset: 0,
+                  backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
+                  backgroundSize: "22px 22px",
                   pointerEvents: "none",
-                  borderRadius: "50%",
+                }} />
+                {/* Glow */}
+                <div style={{
+                  position: "absolute", top: "-80px", right: "-80px",
+                  width: "300px", height: "300px",
+                  background: "radial-gradient(circle, rgba(232,168,124,0.18) 0%, transparent 65%)",
+                  pointerEvents: "none", borderRadius: "50%",
                 }} />
 
-                <p style={{ color: "#7A7280", fontSize: "11px", marginBottom: "8px" }}>
+                <p style={{ color: "#6B6478", fontSize: "11px", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "14px", position: "relative" }}>
                   {profile.partner1 && profile.partner2
-                    ? `${profile.partner1} & ${profile.partner2}${dateDisplay.kind === "countdown" ? ` · ${dateDisplay.formatted}` : ""}`
+                    ? `${profile.partner1} & ${profile.partner2}`
                     : "AI Wedding Producer"}
                 </p>
 
                 {dateDisplay.kind === "countdown" ? (
-                  <>
-                    <div className="flex flex-row items-baseline gap-2">
+                  <div style={{ position: "relative" }}>
+                    <div className="flex flex-row items-end gap-3" style={{ marginBottom: "6px" }}>
                       <span
-                        className="font-extrabold leading-none"
                         style={{
-                          fontSize: "60px",
-                          background: "linear-gradient(135deg, #F8B4A6 0%, #E89579 50%, #D4A574 100%)",
+                          fontSize: "76px",
+                          fontWeight: "800",
+                          lineHeight: 1,
+                          letterSpacing: "-3px",
+                          background: "linear-gradient(135deg, #FBCFB8 0%, #E89579 45%, #C96F42 100%)",
                           WebkitBackgroundClip: "text",
                           WebkitTextFillColor: "transparent",
                           backgroundClip: "text",
@@ -356,47 +361,37 @@ export default function Home() {
                       >
                         {dateDisplay.days}
                       </span>
-                      <span style={{ color: "#B8B0A8", fontSize: "20px" }}>ימים</span>
+                      <div style={{ paddingBottom: "10px" }}>
+                        <span style={{ color: "#7A7280", fontSize: "18px", fontWeight: "300" }}>ימים</span>
+                      </div>
                     </div>
-                    <p style={{ color: "#B8B0A8", fontSize: "14px", marginTop: "2px", marginBottom: "14px" }}>
-                      לחתונה שלכם
-                    </p>
-                  </>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                      <div style={{ flex: 1, height: "1px", backgroundColor: "rgba(255,255,255,0.07)" }} />
+                      <span style={{ color: "#6B6478", fontSize: "12px" }}>{dateDisplay.formatted}</span>
+                    </div>
+                  </div>
                 ) : dateDisplay.kind === "freetext" ? (
-                  <div style={{ marginBottom: "14px", marginTop: "8px" }}>
+                  <div style={{ position: "relative", marginBottom: "4px" }}>
                     <p
-                      className="font-extrabold leading-none"
                       style={{
-                        fontSize: "36px",
-                        background: "linear-gradient(135deg, #F8B4A6 0%, #E89579 50%, #D4A574 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
+                        fontSize: "38px", fontWeight: "800", lineHeight: 1, letterSpacing: "-1px",
+                        background: "linear-gradient(135deg, #FBCFB8 0%, #E89579 45%, #C96F42 100%)",
+                        WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
                       }}
                     >
                       {dateDisplay.text}
                     </p>
-                    <p style={{ color: "#B8B0A8", fontSize: "14px", marginTop: "6px" }}>
-                      לחתונה שלכם
-                    </p>
+                    <p style={{ color: "#7A7280", fontSize: "13px", marginTop: "8px" }}>לחתונה שלכם</p>
                   </div>
                 ) : dateDisplay.kind === "past" ? (
-                  <div style={{ marginBottom: "14px", marginTop: "8px" }}>
-                    <p style={{ color: "#E8A87C", fontSize: "22px", fontWeight: "700" }}>
-                      בדוק את התאריך
-                    </p>
-                    <p style={{ color: "#6B6478", fontSize: "13px", marginTop: "4px" }}>
-                      התאריך שנשמר כבר עבר
-                    </p>
+                  <div style={{ position: "relative", marginBottom: "4px" }}>
+                    <p style={{ color: "#E8A87C", fontSize: "24px", fontWeight: "700" }}>בדוק את התאריך</p>
+                    <p style={{ color: "#6B6478", fontSize: "13px", marginTop: "4px" }}>התאריך שנשמר כבר עבר</p>
                   </div>
                 ) : (
-                  <div style={{ marginBottom: "14px", marginTop: "8px" }}>
-                    <p style={{ color: "#B8B0A8", fontSize: "22px", fontWeight: "700" }}>
-                      התאריך עוד לא נקבע
-                    </p>
-                    <p style={{ color: "#6B6478", fontSize: "13px", marginTop: "4px" }}>
-                      ספרו לי מתי — ואתחיל לתכנן
-                    </p>
+                  <div style={{ position: "relative", marginBottom: "4px" }}>
+                    <p style={{ color: "#B8B0A8", fontSize: "24px", fontWeight: "700" }}>התאריך עוד לא נקבע</p>
+                    <p style={{ color: "#6B6478", fontSize: "13px", marginTop: "4px" }}>ספרו לי מתי — ואתחיל לתכנן</p>
                   </div>
                 )}
               </div>
@@ -405,11 +400,11 @@ export default function Home() {
               <div
                 className="col-span-2 flex flex-row items-center rounded-2xl overflow-hidden relative cursor-pointer"
                 style={{
-                  border: `1px solid ${venueCfg.color}4D`,
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                  minHeight: "80px",
-                  padding: "14px",
-                  gap: "12px",
+                  border: `1px solid ${venueCfg.color}55`,
+                  boxShadow: `inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 16px rgba(0,0,0,0.25)`,
+                  minHeight: "84px",
+                  padding: "16px",
+                  gap: "14px",
                   ...(venueSlot?.vendor
                     ? {
                         backgroundImage:
@@ -417,7 +412,7 @@ export default function Home() {
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }
-                    : { backgroundColor: "#1A1428" }),
+                    : { background: "linear-gradient(135deg, #1C1530 0%, #1A1428 100%)" }),
                 }}
                 onClick={() => setOpenSlotId("venue")}
               >
@@ -425,8 +420,7 @@ export default function Home() {
                   <div
                     className="absolute inset-0"
                     style={{
-                      background:
-                        "linear-gradient(to left, rgba(15,10,26,0.85) 0%, rgba(15,10,26,0.5) 100%)",
+                      background: "linear-gradient(to left, rgba(10,6,20,0.92) 0%, rgba(10,6,20,0.65) 55%, rgba(10,6,20,0.3) 100%)",
                       pointerEvents: "none",
                     }}
                   />
@@ -509,9 +503,11 @@ export default function Home() {
                     style={{
                       flex: 1,
                       aspectRatio: "1",
-                      backgroundColor: "#1A1428",
-                      border: `1px solid ${expandedSection === "favorites" ? "rgba(232,168,124,0.45)" : "rgba(255,255,255,0.11)"}`,
-                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                      background: expandedSection === "favorites"
+                        ? "linear-gradient(145deg, #221535 0%, #1A1428 100%)"
+                        : "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
+                      border: `1px solid ${expandedSection === "favorites" ? "rgba(232,168,124,0.40)" : "rgba(255,255,255,0.09)"}`,
+                      boxShadow: expandedSection === "favorites" ? "0 0 0 1px rgba(232,168,124,0.10), inset 0 1px 0 rgba(255,255,255,0.06)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
                       borderRadius: "16px",
                       padding: "13px",
                       cursor: "pointer",
@@ -519,7 +515,7 @@ export default function Home() {
                       flexDirection: "column",
                       justifyContent: "space-between",
                       direction: "rtl",
-                      transition: "border-color 0.2s",
+                      transition: "all 0.2s",
                       textAlign: "right",
                     }}
                   >
@@ -555,9 +551,11 @@ export default function Home() {
                     style={{
                       flex: 1,
                       aspectRatio: "1",
-                      backgroundColor: "#1A1428",
-                      border: `1px solid ${expandedSection === "vendors" ? "rgba(232,168,124,0.45)" : "rgba(255,255,255,0.11)"}`,
-                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                      background: expandedSection === "vendors"
+                        ? "linear-gradient(145deg, #221535 0%, #1A1428 100%)"
+                        : "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
+                      border: `1px solid ${expandedSection === "vendors" ? "rgba(232,168,124,0.40)" : "rgba(255,255,255,0.09)"}`,
+                      boxShadow: expandedSection === "vendors" ? "0 0 0 1px rgba(232,168,124,0.10), inset 0 1px 0 rgba(255,255,255,0.06)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
                       borderRadius: "16px",
                       padding: "13px",
                       cursor: "pointer",
@@ -565,7 +563,7 @@ export default function Home() {
                       flexDirection: "column",
                       justifyContent: "space-between",
                       direction: "rtl",
-                      transition: "border-color 0.2s",
+                      transition: "all 0.2s",
                       textAlign: "right",
                     }}
                   >
@@ -663,54 +661,48 @@ export default function Home() {
               <div
                 className="col-span-2 rounded-2xl"
                 style={{
-                  backgroundColor: "#1A1428",
-                  border: "1px solid rgba(255,255,255,0.11)",
+                  background: "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
+                  border: "1px solid rgba(255,255,255,0.09)",
                   boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                  padding: "14px",
+                  padding: "16px",
                 }}
               >
-                <p
-                  className="font-medium"
-                  style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
-                >
+                <p style={{ color: "#6B6478", fontSize: "10px", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: "14px" }}>
                   תקציב
                 </p>
                 {totalBudget > 0 ? (
                   <>
-                    <div className="flex flex-row justify-between" style={{ marginBottom: "12px" }}>
-                      <BudgetCol
-                        label="מתוכנן"
-                        value={`₪${Math.round(totalBudget / 1000)}K`}
-                        valueColor="#F5F0E8"
-                      />
-                      <BudgetCol
-                        label="הוצאה"
-                        value={`₪${Math.round(totalSpent / 1000)}K`}
-                        valueColor="#E8A87C"
-                      />
-                      <BudgetCol
-                        label="נותר"
-                        value={`₪${Math.round(remaining / 1000)}K`}
-                        valueColor="#8FBC8F"
-                      />
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
+                      {[
+                        { label: "מתוכנן", value: totalBudget, color: "#F5F0E8", bg: "rgba(255,255,255,0.04)" },
+                        { label: "הוצאה",  value: totalSpent,  color: "#E8A87C", bg: "rgba(232,168,124,0.08)" },
+                        { label: "נותר",   value: remaining,   color: "#8FBC8F", bg: "rgba(143,188,143,0.08)" },
+                      ].map(({ label, value, color, bg }) => (
+                        <div key={label} style={{ backgroundColor: bg, borderRadius: "10px", padding: "10px 8px", textAlign: "center" }}>
+                          <p style={{ color: "#6B6478", fontSize: "10px", marginBottom: "5px" }}>{label}</p>
+                          <p style={{ color, fontSize: "15px", fontWeight: "700" }}>
+                            ₪{value >= 1000 ? `${Math.round(value / 1000)}K` : value}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                    <div
-                      className="rounded-full"
-                      style={{ height: "6px", backgroundColor: "rgba(255,255,255,0.08)" }}
-                    >
-                      <div
-                        className="rounded-full"
-                        style={{ width: `${pct}%`, height: "100%", backgroundColor: "#E8A87C" }}
-                      />
+                    <div style={{ position: "relative" }}>
+                      <div className="rounded-full" style={{ height: "6px", backgroundColor: "rgba(255,255,255,0.06)" }}>
+                        <div
+                          className="rounded-full"
+                          style={{
+                            width: `${pct}%`, height: "100%",
+                            background: "linear-gradient(90deg, #E8A87C, #C96F42)",
+                            boxShadow: "0 0 8px rgba(232,168,124,0.45)",
+                            transition: "width 0.6s ease",
+                          }}
+                        />
+                      </div>
+                      <p style={{ color: "#6B6478", fontSize: "11px", marginTop: "7px" }}>{pct}% מהתקציב נוצל</p>
                     </div>
-                    <p style={{ color: "#7A7280", fontSize: "12px", marginTop: "6px" }}>
-                      {pct}% מהתקציב נוצל
-                    </p>
                   </>
                 ) : (
-                  <p style={{ color: "#6B6478", fontSize: "14px" }}>
-                    תקציב יוגדר בשיחה
-                  </p>
+                  <p style={{ color: "#6B6478", fontSize: "14px" }}>תקציב יוגדר בשיחה</p>
                 )}
               </div>
             </div>
@@ -730,29 +722,42 @@ export default function Home() {
             <div
               className="flex flex-row items-center rounded-full cursor-pointer"
               style={{
-                height: "52px",
-                backgroundColor: "#221A33",
-                border: "1px solid rgba(255,255,255,0.10)",
+                height: "54px",
+                background: "linear-gradient(135deg, #241B38 0%, #1E1630 100%)",
+                border: "1px solid rgba(232,168,124,0.18)",
+                boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.35)",
                 gap: "10px",
-                paddingLeft: "16px",
-                paddingRight: "16px",
+                paddingLeft: "8px",
+                paddingRight: "8px",
               }}
               onClick={() => setChatOpen(true)}
             >
-              <div
-                className="flex items-center justify-center rounded-full flex-shrink-0"
-                style={{ width: "30px", height: "30px", backgroundColor: "#E8A87C" }}
-              >
-                <Sparkles size={14} style={{ color: "#1A1428" }} />
+              <div style={{ position: "relative", flexShrink: 0 }}>
+                <div
+                  className="flex items-center justify-center rounded-full"
+                  style={{ width: "38px", height: "38px", backgroundColor: "#E8A87C" }}
+                >
+                  <Sparkles size={15} style={{ color: "#1A1428" }} />
+                </div>
+                <div style={{
+                  position: "absolute", bottom: "1px", right: "1px",
+                  width: "9px", height: "9px", borderRadius: "50%",
+                  backgroundColor: "#8FBC8F",
+                  border: "1.5px solid #1E1630",
+                }} />
               </div>
-              <span className="flex-1 text-sm" style={{ color: "#7A7280" }}>
+              <span className="flex-1 text-sm" style={{ color: "#6B6478", paddingRight: "4px" }}>
                 שאל את הסוכן...
               </span>
               <div
                 className="flex items-center justify-center rounded-full flex-shrink-0"
-                style={{ width: "34px", height: "34px", backgroundColor: "rgba(232,168,124,0.15)" }}
+                style={{
+                  width: "38px", height: "38px",
+                  background: "linear-gradient(135deg, #E8A87C, #C96F42)",
+                  boxShadow: "0 2px 10px rgba(232,168,124,0.3)",
+                }}
               >
-                <ArrowUp size={16} style={{ color: "#E8A87C" }} />
+                <ArrowUp size={16} style={{ color: "#1A1428" }} />
               </div>
             </div>
           </div>
@@ -788,44 +793,45 @@ function VendorWidget({
   const [hovered, setHovered] = useState(false);
   return (
     <div
-      className="flex flex-col justify-between rounded-2xl relative cursor-pointer"
+      className="flex flex-col justify-between rounded-2xl relative cursor-pointer overflow-hidden"
       style={{
-        backgroundColor: "#1A1428",
+        background: "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
         border: `1px solid ${hovered ? hoverBorderColor : borderColor}`,
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+        boxShadow: hovered ? `0 0 0 1px ${hoverBorderColor}, inset 0 1px 0 rgba(255,255,255,0.06)` : "inset 0 1px 0 rgba(255,255,255,0.04)",
         padding: "13px",
-        minHeight: "108px",
-        opacity: dimmed ? 0.6 : 1,
-        transition: "border-color 0.2s",
+        minHeight: "112px",
+        opacity: dimmed ? 0.5 : 1,
+        transition: "border-color 0.2s, box-shadow 0.2s",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={onClick}
     >
-      <span
-        className="absolute font-semibold rounded-full"
-        style={{
-          top: "10px",
-          right: "10px",
-          backgroundColor: `${badgeColor}1A`,
-          color: badgeColor,
-          fontSize: "10px",
-          padding: "2px 8px",
-        }}
-      >
-        {badgeLabel}
-      </span>
-      <div
-        className="flex items-center justify-center rounded-lg"
-        style={{ width: "32px", height: "32px", backgroundColor: iconBg, marginTop: "2px" }}
-      >
-        {icon}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div
+          className="flex items-center justify-center rounded-full"
+          style={{ width: "34px", height: "34px", backgroundColor: iconBg }}
+        >
+          {icon}
+        </div>
+        <span
+          className="font-semibold rounded-full"
+          style={{
+            backgroundColor: `${badgeColor}18`,
+            color: badgeColor,
+            fontSize: "10px",
+            padding: "3px 8px",
+            border: `1px solid ${badgeColor}30`,
+          }}
+        >
+          {badgeLabel}
+        </span>
       </div>
-      <div className="flex flex-col" style={{ marginTop: "8px" }}>
-        <span className="font-semibold text-sm" style={{ color: "#F5F0E8" }}>
+      <div className="flex flex-col" style={{ marginTop: "10px" }}>
+        <span className="font-semibold text-sm" style={{ color: "#F5F0E8", letterSpacing: "-0.01em" }}>
           {name}
         </span>
-        <span style={{ color: "#7A7280", fontSize: "12px" }}>{sub}</span>
+        <span style={{ color: "#6B6478", fontSize: "11px", marginTop: "2px" }}>{sub}</span>
       </div>
     </div>
   );
