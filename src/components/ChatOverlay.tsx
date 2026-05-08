@@ -25,6 +25,7 @@ interface ChatOverlayProps {
   autoSend?: boolean;
   onInitialInputConsumed?: () => void;
   vendorContext?: { slotLabel: string; vendorName?: string } | null;
+  initialVendorNote?: string;
 }
 
 function renderMessage(content: string): string {
@@ -34,13 +35,17 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, onVendorTap, initialInput, autoSend, onInitialInputConsumed, vendorContext }: ChatOverlayProps) {
+export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, onVendorTap, initialInput, autoSend, onInitialInputConsumed, vendorContext, initialVendorNote }: ChatOverlayProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const autoSendRef = useRef(autoSend);
   autoSendRef.current = autoSend;
+  const vendorContextRef = useRef(vendorContext);
+  vendorContextRef.current = vendorContext;
+  const initialVendorNoteRef = useRef(initialVendorNote);
+  initialVendorNoteRef.current = initialVendorNote;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -53,20 +58,21 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
   useEffect(() => {
     if (isOpen && initialInput) {
       if (autoSendRef.current) {
-        sendMessage(initialInput);
+        sendMessage(initialInput, initialVendorNoteRef.current);
       } else {
         setInputValue(initialInput);
         setTimeout(() => inputRef.current?.focus(), 50);
       }
       onInitialInputConsumed?.();
     }
-  }, [isOpen, initialInput]); // autoSend intentionally read via ref
+  }, [isOpen, initialInput]); // autoSend / vendorNote intentionally read via ref
 
-  async function sendMessage(overrideText?: string) {
+  async function sendMessage(overrideText?: string, noteOverride?: string) {
     const text = (overrideText ?? inputValue).trim();
     if (!text || isLoading) return;
 
     const userMessage: Message = { role: "user", content: text };
+    if (noteOverride) userMessage.vendorNote = noteOverride;
     const nextMessages = [...messages, userMessage];
 
     setMessages(nextMessages);
@@ -77,7 +83,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages, profile, slots, vendorContext: vendorContext ?? null }),
+        body: JSON.stringify({ messages: nextMessages, profile, slots, vendorContext: vendorContextRef.current ?? null }),
       });
       if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();
@@ -222,7 +228,16 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                   )}
                 </div>
               ) : (
-                <div key={i} className="self-end" style={{ maxWidth: "84%" }}>
+                <div key={i} className="self-end flex flex-col items-end" style={{ maxWidth: "84%" }}>
+                  {msg.vendorNote && (
+                    <span style={{
+                      fontSize: '11px', color: '#E8A87C', marginBottom: '4px',
+                      backgroundColor: 'rgba(232,168,124,0.12)', borderRadius: '10px',
+                      padding: '2px 9px', fontWeight: 600,
+                    }}>
+                      בנוגע ל-{msg.vendorNote}
+                    </span>
+                  )}
                   <div
                     className="text-sm leading-relaxed"
                     style={{

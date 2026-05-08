@@ -27,6 +27,7 @@ export interface Message {
   content: string;
   cards?: string[];
   datePicker?: 'single' | 'range';
+  vendorNote?: string;
 }
 
 export interface ChatMessage {

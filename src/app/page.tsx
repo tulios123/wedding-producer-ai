@@ -98,6 +98,7 @@ export default function Home() {
   const [chatInitialInput, setChatInitialInput] = useState("");
   const [chatAutoSend, setChatAutoSend] = useState(false);
   const [chatVendorContext, setChatVendorContext] = useState<{ slotLabel: string; vendorName?: string } | null>(null);
+  const [chatVendorNote, setChatVendorNote] = useState<string | undefined>(undefined);
 
   function toggleFavorite(id: string) {
     setFavorites((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
@@ -200,6 +201,7 @@ export default function Home() {
           if (!v) return;
           const CAT: Record<string, string> = { venue: "מקום", catering: "קייטרינג", photography: "צילום" };
           setChatVendorContext({ slotLabel: CAT[v.category] ?? v.category, vendorName: v.name });
+          setChatVendorNote(v.name);
           setChatInitialInput(text);
           setChatAutoSend(true);
           setSelectedVendorId(null);
@@ -220,8 +222,9 @@ export default function Home() {
         onVendorTap={(id) => setSelectedVendorId(id)}
         initialInput={chatInitialInput}
         autoSend={chatAutoSend}
-        onInitialInputConsumed={() => { setChatInitialInput(""); setChatAutoSend(false); }}
+        onInitialInputConsumed={() => { setChatInitialInput(""); setChatAutoSend(false); setChatVendorNote(undefined); }}
         vendorContext={chatVendorContext}
+        initialVendorNote={chatVendorNote}
       />
 
 
