@@ -32,19 +32,32 @@ function buildVendorContextBlock(ctx: VendorContext): string {
     ? vendors.vendors.find((v) => v.name === ctx.vendorName) ?? null
     : null;
 
-  let block = `\n\n## הקשר הנוכחי — המשתמש פתח כרטיס ספק\n`;
+  let block = `\n\n## הקשר הנוכחי — המשתמש שואל על ספק ספציפי\n`;
   block += `קטגוריה: ${ctx.slotLabel}\n`;
-  block += `ספק: ${ctx.vendorName ?? "טרם נבחר"}\n`;
+  block += `שם הספק: ${ctx.vendorName ?? "טרם נבחר"}\n`;
 
   if (fullVendor) {
-    block += `\nפרטי הספק:\n`;
+    block += `\n### פרטי הספק (השתמש בנתונים האלה בלבד — אל תמציא):\n`;
     block += `תיאור: ${fullVendor.description}\n`;
-    block += `מחיר: ₪${fullVendor.priceRange.min.toLocaleString()} – ₪${fullVendor.priceRange.max.toLocaleString()}\n`;
+    block += `טווח מחיר: ₪${fullVendor.priceRange.min.toLocaleString()} – ₪${fullVendor.priceRange.max.toLocaleString()}\n`;
     block += `נקודות עיקריות: ${fullVendor.bullets.join(" | ")}\n`;
     block += `אזור: ${fullVendor.region} | סגנון: ${fullVendor.style.join(", ")}\n`;
+
+    const d = fullVendor.details;
+    if (d.capacity) block += `קיבולת: ${d.capacity.min}–${d.capacity.max} אורחים\n`;
+    if (d.type) block += `סוג: ${d.type}\n`;
+    if (d.kashrut) block += `כשרות: ${d.kashrut}\n`;
+    if (d.parking !== undefined) block += `חניה: ${d.parking ? "כן" : "לא"}\n`;
+    if (d.pricePerPerson) block += `מחיר לאורח: ₪${d.pricePerPerson.min}–₪${d.pricePerPerson.max}\n`;
+    if (d.cuisineStyle) block += `סגנון בישול: ${d.cuisineStyle}\n`;
+    if (d.dietary?.length) block += `אפשרויות תזונה: ${d.dietary.join(", ")}\n`;
+    if (d.style) block += `סגנון צילום: ${d.style}\n`;
+    if (d.package) block += `חבילה: ${d.package}\n`;
+    if (d.deliverables?.length) block += `פריטי משלוח: ${d.deliverables.join(", ")}\n`;
+    if (d.experience) block += `ניסיון: ${d.experience} שנים\n`;
   }
 
-  block += `\nהשאלות עכשיו מתייחסות לספק זה. ענה בצורה ממוקדת לגביו — היה ספציפי, השתמש בפרטים הידועים.`;
+  block += `\n**חשוב:** כל השאלות בשיחה זו מתייחסות ל${ctx.vendorName ?? "ספק זה"}. ענה אך ורק על בסיס הנתונים שלמעלה. אל תדבר על ספקים אחרים ואל תמציא פרטים.`;
   return block;
 }
 
