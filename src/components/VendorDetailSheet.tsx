@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { X, Heart } from 'lucide-react';
+import { X, Heart, ArrowUp } from 'lucide-react';
 import vendorsData from '@/data/vendors.json';
 import type { Vendor } from '@/types';
 
@@ -12,6 +13,7 @@ interface VendorDetailSheetProps {
   onClose: () => void;
   onToggleFavorite: () => void;
   onAskAgent: () => void;
+  onChatSend?: (text: string, vendorId: string) => void;
 }
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -20,8 +22,17 @@ const CATEGORY_LABELS: Record<string, string> = {
   photography: 'צילום',
 };
 
-export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavorite }: VendorDetailSheetProps) {
+export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavorite, onChatSend }: VendorDetailSheetProps) {
   const vendor = vendorId ? (vendorsData.vendors as Vendor[]).find(v => v.id === vendorId) ?? null : null;
+  const [input, setInput] = useState('');
+
+  function handleSend(e: React.FormEvent) {
+    e.preventDefault();
+    if (!input.trim() || !vendorId) return;
+    onChatSend?.(input.trim(), vendorId);
+    setInput('');
+    onClose();
+  }
 
   return (
     <AnimatePresence>
@@ -91,7 +102,7 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
             </div>
 
             {/* Content */}
-            <div style={{ padding: '20px 16px 48px', direction: 'rtl' }}>
+            <div style={{ padding: '20px 16px 32px', direction: 'rtl' }}>
               <div className="flex items-center gap-2" style={{ marginBottom: '6px' }}>
                 <span
                   className="rounded-full"
@@ -129,6 +140,50 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
               </div>
             </div>
           </div>
+
+          {/* Chat input bar */}
+          <form
+            onSubmit={handleSend}
+            style={{
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 12px 28px',
+              borderTop: '1px solid rgba(255,255,255,0.07)',
+              backgroundColor: '#0F0A1A',
+            }}
+          >
+            <input
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={vendor ? `שאל על ${vendor.name}...` : 'שאל שאלה...'}
+              style={{
+                flex: 1,
+                backgroundColor: '#1A1428',
+                border: '1px solid rgba(255,255,255,0.09)',
+                borderRadius: '22px',
+                padding: '10px 16px',
+                color: '#F5F0E8',
+                fontSize: '14px',
+                direction: 'rtl',
+                fontFamily: 'inherit',
+                outline: 'none',
+              }}
+            />
+            <button
+              type="submit"
+              style={{
+                width: '40px', height: '40px', borderRadius: '50%', flexShrink: 0,
+                backgroundColor: input.trim() ? '#E8A87C' : 'rgba(232,168,124,0.15)',
+                border: 'none', cursor: input.trim() ? 'pointer' : 'default',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                transition: 'background-color 0.15s',
+              }}
+            >
+              <ArrowUp size={16} style={{ color: input.trim() ? '#1A1428' : 'rgba(232,168,124,0.4)' }} />
+            </button>
+          </form>
         </motion.div>
       )}
     </AnimatePresence>

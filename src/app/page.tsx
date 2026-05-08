@@ -195,6 +195,16 @@ export default function Home() {
           setSelectedVendorId(null);
           setChatOpen(true);
         }}
+        onChatSend={(text, vendorId) => {
+          const v = vendorsData.vendors.find((v) => v.id === vendorId);
+          if (!v) return;
+          const CAT: Record<string, string> = { venue: "מקום", catering: "קייטרינג", photography: "צילום" };
+          setChatVendorContext({ slotLabel: CAT[v.category] ?? v.category, vendorName: v.name });
+          setChatInitialInput(text);
+          setChatAutoSend(true);
+          setSelectedVendorId(null);
+          setChatOpen(true);
+        }}
       />
 
       <ChatOverlay
