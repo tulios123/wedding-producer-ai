@@ -22,6 +22,7 @@ interface ChatOverlayProps {
   initialInput?: string;
   autoSend?: boolean;
   onInitialInputConsumed?: () => void;
+  vendorContext?: { slotLabel: string; vendorName?: string } | null;
 }
 
 function renderMessage(content: string): string {
@@ -31,7 +32,7 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, initialInput, autoSend, onInitialInputConsumed }: ChatOverlayProps) {
+export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, initialInput, autoSend, onInitialInputConsumed, vendorContext }: ChatOverlayProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -72,7 +73,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: nextMessages, profile, slots }),
+        body: JSON.stringify({ messages: nextMessages, profile, slots, vendorContext: vendorContext ?? null }),
       });
       if (!res.ok) throw new Error(`API ${res.status}`);
       const data = await res.json();

@@ -114,6 +114,7 @@ export default function Home() {
   const [openSlotId, setOpenSlotId] = useState<SlotId | null>(null);
   const [chatInitialInput, setChatInitialInput] = useState("");
   const [chatAutoSend, setChatAutoSend] = useState(false);
+  const [chatVendorContext, setChatVendorContext] = useState<{ slotLabel: string; vendorName?: string } | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   function toggleFavorite(id: string) {
@@ -121,10 +122,8 @@ export default function Home() {
   }
 
   function handleSlotSend(text: string, slot: Slot) {
-    const ctx = slot.vendor
-      ? `לגבי ${slot.label} (${slot.vendor}): ${text}`
-      : `לגבי ${slot.label}: ${text}`;
-    setChatInitialInput(ctx);
+    setChatVendorContext({ slotLabel: slot.label, vendorName: slot.vendor });
+    setChatInitialInput(text);
     setChatAutoSend(true);
     setOpenSlotId(null);
     setChatOpen(true);
@@ -211,7 +210,7 @@ export default function Home() {
 
       <ChatOverlay
         isOpen={chatOpen}
-        onClose={() => setChatOpen(false)}
+        onClose={() => { setChatOpen(false); setChatVendorContext(null); }}
         onUpdate={handleUpdate}
         messages={chatHistory}
         setMessages={setChatHistory}
@@ -222,6 +221,7 @@ export default function Home() {
         initialInput={chatInitialInput}
         autoSend={chatAutoSend}
         onInitialInputConsumed={() => { setChatInitialInput(""); setChatAutoSend(false); }}
+        vendorContext={chatVendorContext}
       />
 
       {/* Toast */}

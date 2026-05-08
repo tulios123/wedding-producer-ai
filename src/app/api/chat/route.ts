@@ -22,7 +22,33 @@ const STATUS_LABELS: Record<SlotStatus, string> = {
   signed: "חתום",
 };
 
-function buildSystemPrompt(profile: Profile, slots: Slot[]): string {
+interface VendorContext {
+  slotLabel: string;
+  vendorName?: string;
+}
+
+function buildVendorContextBlock(ctx: VendorContext): string {
+  const fullVendor = ctx.vendorName
+    ? vendors.vendors.find((v) => v.name === ctx.vendorName) ?? null
+    : null;
+
+  let block = `\n\n## הקשר הנוכחי — המשתמש פתח כרטיס ספק\n`;
+  block += `קטגוריה: ${ctx.slotLabel}\n`;
+  block += `ספק: ${ctx.vendorName ?? "טרם נבחר"}\n`;
+
+  if (fullVendor) {
+    block += `\nפרטי הספק:\n`;
+    block += `תיאור: ${fullVendor.description}\n`;
+    block += `מחיר: ₪${fullVendor.priceRange.min.toLocaleString()} – ₪${fullVendor.priceRange.max.toLocaleString()}\n`;
+    block += `נקודות עיקריות: ${fullVendor.bullets.join(" | ")}\n`;
+    block += `אזור: ${fullVendor.region} | סגנון: ${fullVendor.style.join(", ")}\n`;
+  }
+
+  block += `\nהשאלות עכשיו מתייחסות לספק זה. ענה בצורה ממוקדת לגביו — היה ספציפי, השתמש בפרטים הידועים.`;
+  return block;
+}
+
+function buildSystemPrompt(profile: Profile, slots: Slot[], vendorContext?: VendorContext | null): string {
   const currentYear = new Date().getFullYear();
   const nextYear = currentYear + 1;
   const couple =
@@ -40,6 +66,8 @@ function buildSystemPrompt(profile: Profile, slots: Slot[]): string {
   const slotsBlock = slots
     .map((s) => `- ${s.label}: ${STATUS_LABELS[s.status]}${s.vendor ? ` (${s.vendor})` : ""}`)
     .join("\n");
+
+  const contextBlock = vendorContext ? buildVendorContextBlock(vendorContext) : "";
 
   return `אתה המפיק — מפיק חתונות שראה 200+ חתונות. יש לך דעות מקצועיות ואתה לא ChatGPT גנרי. חם אבל ענייני. דוחף בנושאים קריטיים (אולם, צלם) — שם להחלטות יש השלכות לטווח ארוך. רך בגמיש (וייב, אווירה, קונספט) — שם אין תשובה נכונה. אתה עוזר ל${couple} לתכנן את חתונתם.
 
@@ -164,7 +192,7 @@ STATUS: idle / collecting / negotiating / hold / signed
 ${slotsBlock}
 
 ## ספקים זמינים
-${JSON.stringify(slimVendors)}`;
+${JSON.stringify(slimVendors)}${contextBlock}`;
 }
 
 interface Message {
@@ -178,7 +206,8 @@ export async function POST(req: NextRequest) {
       messages,
       profile = {},
       slots = [],
-    }: { messages: Message[]; profile: Profile; slots: Slot[] } = await req.json();
+      vendorContext = null,
+    }: { messages: Message[]; profile: Profile; slots: Slot[]; vendorContext?: VendorContext | null } = await req.json();
 
     if (!Array.isArray(messages)) throw new Error("messages must be an array");
     const apiMessages = messages.map(({ role, content }) => ({ role, content }));
@@ -193,7 +222,7 @@ export async function POST(req: NextRequest) {
       body: JSON.stringify({
         model: "claude-haiku-4-5",
         max_tokens: 1024,
-        system: buildSystemPrompt(profile, slots),
+        system: buildSystemPrompt(profile, slots, vendorContext),
         messages: apiMessages,
       }),
     });
