@@ -197,39 +197,41 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           </button>
         </div>
 
-        {/* Skip link + dev reset */}
-        <div style={{ marginTop: "14px", display: "flex", alignItems: "center", gap: "12px" }}>
-        <button
-          onClick={() => {
-            if (window.confirm("איפוס יחזיר הכל למצב התחלתי. בטוח?")) {
-              clearAll();
-              window.location.reload();
-            }
-          }}
-          style={{
-            display: "flex", alignItems: "center", justifyContent: "center",
-            width: "28px", height: "28px", borderRadius: "50%",
-            backgroundColor: "rgba(180,120,140,0.10)",
-            border: "1px solid rgba(180,120,140,0.15)",
-            cursor: "pointer", flexShrink: 0,
-          }}
-        >
-          <RotateCcw size={13} style={{ color: "#A89098" }} />
-        </button>
-        <button
-          onClick={() => onNavigate("dashboard")}
-          style={{
-            color: "#A89098",
-            fontSize: "13px",
-            background: "none",
-            border: "none",
-            cursor: "pointer",
-            textDecoration: "underline",
-            textUnderlineOffset: "3px",
-          }}
-        >
-          כבר יש לי נתונים — עבור לדשבורד
-        </button>
+        {/* Controls row */}
+        <div style={{ marginTop: "20px", display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+          <button
+            onClick={() => onNavigate("dashboard")}
+            style={{
+              display: "flex", alignItems: "center", gap: "6px",
+              backgroundColor: "rgba(201,123,143,0.10)",
+              border: "1px solid rgba(201,123,143,0.18)",
+              borderRadius: "22px",
+              padding: "9px 18px",
+              color: "#C97B8F",
+              fontSize: "13px",
+              fontWeight: "600",
+              cursor: "pointer",
+            }}
+          >
+            עבור לדשבורד
+          </button>
+          <button
+            onClick={() => {
+              if (window.confirm("איפוס יחזיר הכל למצב התחלתי. בטוח?")) {
+                clearAll();
+                window.location.reload();
+              }
+            }}
+            style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              width: "32px", height: "32px", borderRadius: "50%",
+              backgroundColor: "rgba(180,120,140,0.08)",
+              border: "1px solid rgba(180,120,140,0.14)",
+              cursor: "pointer",
+            }}
+          >
+            <RotateCcw size={13} style={{ color: "#A89098" }} />
+          </button>
         </div>
 
         {/* Conversation */}
