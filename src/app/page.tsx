@@ -257,27 +257,20 @@ export default function Home() {
 
       <motion.div
         className="flex flex-col h-screen w-full"
-        style={{ backgroundColor: "#0F0A1A" }}
+        style={{ backgroundColor: "#100C1C" }}
         animate={{ opacity: chatOpen ? 0.3 : 1 }}
         transition={{ duration: 0.25 }}
       >
         {/* Max-width container */}
-        <div
-          className="flex flex-col h-full mx-auto w-full"
-          style={{
-            maxWidth: "430px",
-            borderLeft: "1px solid rgba(255,255,255,0.05)",
-            borderRight: "1px solid rgba(255,255,255,0.05)",
-          }}
-        >
+        <div className="flex flex-col h-full mx-auto w-full" style={{ maxWidth: "430px" }}>
           {/* Scrollable content */}
           <div className="flex-1 overflow-y-auto">
             {/* Header */}
-            <div className="flex flex-row items-center justify-between px-4 py-4">
+            <div className="flex flex-row items-center justify-between px-4" style={{ paddingTop: "16px", paddingBottom: "8px" }}>
               <div className="flex flex-col">
-                <span style={{ color: "#7A7280", fontSize: "11px" }}>AI Wedding Producer</span>
-                <span className="font-bold" style={{ color: "#F5F0E8", fontSize: "18px" }}>
-                  {greetingName ? `שלום, ${greetingName}` : "שלום!"}
+                <span style={{ color: "rgba(245,240,232,0.35)", fontSize: "11px", letterSpacing: "0.04em" }}>AI Wedding Producer</span>
+                <span className="font-bold" style={{ color: "#F5F0E8", fontSize: "20px", letterSpacing: "-0.3px" }}>
+                  {greetingName ? `${greetingName}` : "שלום!"}
                 </span>
               </div>
               <div className="flex flex-row items-center gap-2">
@@ -290,163 +283,112 @@ export default function Home() {
                       }
                     }}
                     className="flex items-center justify-center rounded-full flex-shrink-0"
-                    style={{
-                      width: "32px",
-                      height: "32px",
-                      backgroundColor: "rgba(255,255,255,0.06)",
-                      border: "1px solid rgba(255,255,255,0.10)",
-                      cursor: "pointer",
-                    }}
+                    style={{ width: "30px", height: "30px", backgroundColor: "rgba(255,255,255,0.06)", border: "none", cursor: "pointer" }}
                   >
-                    <RotateCcw size={14} style={{ color: "#7A7280" }} />
+                    <RotateCcw size={13} style={{ color: "rgba(245,240,232,0.3)" }} />
                   </button>
                 )}
                 <div
                   className="flex items-center justify-center rounded-full font-bold text-sm flex-shrink-0"
-                  style={{ width: "36px", height: "36px", backgroundColor: "#E8A87C", color: "#1A1428" }}
+                  style={{ width: "34px", height: "34px", backgroundColor: "#E8A87C", color: "#1A1428", fontSize: "13px" }}
                 >
                   {profile.partner1 ? profile.partner1[0].toUpperCase() : "?"}
                 </div>
               </div>
             </div>
 
-            {/* Bento Grid */}
-            <div className="grid grid-cols-2" style={{ gap: "10px", padding: "0 16px 100px" }}>
+            {/* Widget Grid */}
+            <div className="grid grid-cols-2" style={{ gap: "8px", padding: "8px 12px 110px" }}>
 
               {/* Widget 1 – Hero */}
               <div
-                className="col-span-2 rounded-3xl relative overflow-hidden"
+                className="col-span-2 rounded-[22px] relative overflow-hidden"
                 style={{
-                  background: "linear-gradient(145deg, #1F1535 0%, #160E2B 60%, #1A1428 100%)",
-                  border: "1px solid rgba(255,255,255,0.10)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.06), 0 8px 32px rgba(0,0,0,0.35)",
-                  padding: "22px 20px 20px",
+                  backgroundColor: "#1C1828",
+                  boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
+                  padding: "18px 18px 16px",
+                  minHeight: "130px",
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "space-between",
                 }}
               >
-                {/* Dot grid texture */}
-                <div style={{
-                  position: "absolute", inset: 0,
-                  backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)",
-                  backgroundSize: "22px 22px",
-                  pointerEvents: "none",
-                }} />
-                {/* Glow */}
-                <div style={{
-                  position: "absolute", top: "-80px", right: "-80px",
-                  width: "300px", height: "300px",
-                  background: "radial-gradient(circle, rgba(232,168,124,0.18) 0%, transparent 65%)",
-                  pointerEvents: "none", borderRadius: "50%",
-                }} />
+                {/* top row */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                  <span style={{ color: "rgba(245,240,232,0.4)", fontSize: "12px", fontWeight: "500" }}>
+                    {dateDisplay.kind === "countdown" ? "ימים לחתונה" : "מועד החתונה"}
+                  </span>
+                  {profile.partner1 && profile.partner2 && (
+                    <span style={{
+                      backgroundColor: "rgba(232,168,124,0.15)", color: "#E8A87C",
+                      fontSize: "11px", fontWeight: "600", padding: "3px 10px", borderRadius: "20px",
+                    }}>
+                      {profile.partner1} & {profile.partner2}
+                    </span>
+                  )}
+                </div>
 
-                <p style={{ color: "#6B6478", fontSize: "11px", letterSpacing: "0.05em", textTransform: "uppercase", marginBottom: "14px", position: "relative" }}>
-                  {profile.partner1 && profile.partner2
-                    ? `${profile.partner1} & ${profile.partner2}`
-                    : "AI Wedding Producer"}
-                </p>
-
+                {/* main value */}
                 {dateDisplay.kind === "countdown" ? (
-                  <div style={{ position: "relative" }}>
-                    <div className="flex flex-row items-end gap-3" style={{ marginBottom: "6px" }}>
-                      <span
-                        style={{
-                          fontSize: "76px",
-                          fontWeight: "800",
-                          lineHeight: 1,
-                          letterSpacing: "-3px",
-                          background: "linear-gradient(135deg, #FBCFB8 0%, #E89579 45%, #C96F42 100%)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }}
-                      >
-                        {dateDisplay.days}
-                      </span>
-                      <div style={{ paddingBottom: "10px" }}>
-                        <span style={{ color: "#7A7280", fontSize: "18px", fontWeight: "300" }}>ימים</span>
-                      </div>
-                    </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <div style={{ flex: 1, height: "1px", backgroundColor: "rgba(255,255,255,0.07)" }} />
-                      <span style={{ color: "#6B6478", fontSize: "12px" }}>{dateDisplay.formatted}</span>
-                    </div>
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: "6px" }}>
+                    <span style={{
+                      fontSize: "80px", fontWeight: "800", lineHeight: 1, letterSpacing: "-4px",
+                      color: "#F5F0E8",
+                    }}>
+                      {dateDisplay.days}
+                    </span>
+                    <span style={{ color: "rgba(245,240,232,0.5)", fontSize: "22px", fontWeight: "300", paddingBottom: "10px" }}>
+                      ימים
+                    </span>
                   </div>
                 ) : dateDisplay.kind === "freetext" ? (
-                  <div style={{ position: "relative", marginBottom: "4px" }}>
-                    <p
-                      style={{
-                        fontSize: "38px", fontWeight: "800", lineHeight: 1, letterSpacing: "-1px",
-                        background: "linear-gradient(135deg, #FBCFB8 0%, #E89579 45%, #C96F42 100%)",
-                        WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text",
-                      }}
-                    >
-                      {dateDisplay.text}
-                    </p>
-                    <p style={{ color: "#7A7280", fontSize: "13px", marginTop: "8px" }}>לחתונה שלכם</p>
-                  </div>
+                  <p style={{ fontSize: "40px", fontWeight: "800", letterSpacing: "-1px", color: "#F5F0E8", lineHeight: 1.1 }}>
+                    {dateDisplay.text}
+                  </p>
                 ) : dateDisplay.kind === "past" ? (
-                  <div style={{ position: "relative", marginBottom: "4px" }}>
-                    <p style={{ color: "#E8A87C", fontSize: "24px", fontWeight: "700" }}>בדוק את התאריך</p>
-                    <p style={{ color: "#6B6478", fontSize: "13px", marginTop: "4px" }}>התאריך שנשמר כבר עבר</p>
-                  </div>
+                  <p style={{ fontSize: "26px", fontWeight: "700", color: "#E8A87C" }}>בדוק את התאריך</p>
                 ) : (
-                  <div style={{ position: "relative", marginBottom: "4px" }}>
-                    <p style={{ color: "#B8B0A8", fontSize: "24px", fontWeight: "700" }}>התאריך עוד לא נקבע</p>
-                    <p style={{ color: "#6B6478", fontSize: "13px", marginTop: "4px" }}>ספרו לי מתי — ואתחיל לתכנן</p>
-                  </div>
+                  <p style={{ fontSize: "22px", fontWeight: "600", color: "rgba(245,240,232,0.55)" }}>תאריך לא נקבע</p>
+                )}
+
+                {/* bottom row */}
+                {dateDisplay.kind === "countdown" && (
+                  <span style={{ color: "rgba(245,240,232,0.3)", fontSize: "12px" }}>{dateDisplay.formatted}</span>
                 )}
               </div>
 
               {/* Widget 2 – Venue (dynamic) */}
               <div
-                className="col-span-2 flex flex-row items-center rounded-2xl overflow-hidden relative cursor-pointer"
+                className="col-span-2 flex flex-row items-center rounded-[22px] overflow-hidden relative cursor-pointer"
                 style={{
-                  border: `1px solid ${venueCfg.color}55`,
-                  boxShadow: `inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 16px rgba(0,0,0,0.25)`,
+                  boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
                   minHeight: "84px",
                   padding: "16px",
                   gap: "14px",
                   ...(venueSlot?.vendor
                     ? {
-                        backgroundImage:
-                          "url(https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80)",
+                        backgroundImage: "url(https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80)",
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                       }
-                    : { background: "linear-gradient(135deg, #1C1530 0%, #1A1428 100%)" }),
+                    : { backgroundColor: "#1C1828" }),
                 }}
                 onClick={() => setOpenSlotId("venue")}
               >
                 {venueSlot?.vendor && (
-                  <div
-                    className="absolute inset-0"
-                    style={{
-                      background: "linear-gradient(to left, rgba(10,6,20,0.92) 0%, rgba(10,6,20,0.65) 55%, rgba(10,6,20,0.3) 100%)",
-                      pointerEvents: "none",
-                    }}
-                  />
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(to left, rgba(8,4,16,0.95) 0%, rgba(8,4,16,0.7) 60%, rgba(8,4,16,0.25) 100%)", pointerEvents: "none" }} />
                 )}
-                <div
-                  className="flex items-center justify-center rounded-xl flex-shrink-0 relative"
-                  style={{ width: "38px", height: "38px", backgroundColor: venueCfg.bg }}
-                >
+                <div className="flex items-center justify-center rounded-full flex-shrink-0 relative" style={{ width: "40px", height: "40px", backgroundColor: venueCfg.bg }}>
                   <Building2 size={18} style={{ color: venueCfg.color }} />
                 </div>
                 <div className="flex flex-col flex-1 relative">
-                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "10px" }}>מקום</span>
-                  <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "15px" }}>
+                  <span style={{ color: "rgba(245,240,232,0.4)", fontSize: "11px", fontWeight: "500" }}>מקום</span>
+                  <span style={{ color: "#F5F0E8", fontSize: "16px", fontWeight: "600", letterSpacing: "-0.2px" }}>
                     {venueSlot?.vendor ?? "בוא נדבר על מקום"}
                   </span>
                 </div>
-                <span
-                  className="font-semibold flex-shrink-0 rounded-full relative"
-                  style={{
-                    backgroundColor: `${venueCfg.color}2E`,
-                    color: venueCfg.color,
-                    fontSize: "12px",
-                    padding: "4px 10px",
-                  }}
-                >
-                  {venueSlot?.status === "signed" ? "✓✓ חתום" : venueCfg.label}
+                <span className="font-semibold flex-shrink-0 rounded-full relative" style={{ backgroundColor: `${venueCfg.color}22`, color: venueCfg.color, fontSize: "11px", padding: "4px 10px" }}>
+                  {venueSlot?.status === "signed" ? "✓ חתום" : venueCfg.label}
                 </span>
               </div>
 
@@ -503,20 +445,18 @@ export default function Home() {
                     style={{
                       flex: 1,
                       aspectRatio: "1",
-                      background: expandedSection === "favorites"
-                        ? "linear-gradient(145deg, #221535 0%, #1A1428 100%)"
-                        : "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
-                      border: `1px solid ${expandedSection === "favorites" ? "rgba(232,168,124,0.40)" : "rgba(255,255,255,0.09)"}`,
-                      boxShadow: expandedSection === "favorites" ? "0 0 0 1px rgba(232,168,124,0.10), inset 0 1px 0 rgba(255,255,255,0.06)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
-                      borderRadius: "16px",
-                      padding: "13px",
+                      backgroundColor: "#1C1828",
+                      boxShadow: expandedSection === "favorites" ? "0 0 0 2px rgba(232,168,124,0.5), 0 2px 12px rgba(0,0,0,0.45)" : "0 2px 12px rgba(0,0,0,0.45)",
+                      borderRadius: "22px",
+                      padding: "14px",
                       cursor: "pointer",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
                       direction: "rtl",
-                      transition: "all 0.2s",
+                      transition: "box-shadow 0.2s",
                       textAlign: "right",
+                      border: "none",
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -551,20 +491,18 @@ export default function Home() {
                     style={{
                       flex: 1,
                       aspectRatio: "1",
-                      background: expandedSection === "vendors"
-                        ? "linear-gradient(145deg, #221535 0%, #1A1428 100%)"
-                        : "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
-                      border: `1px solid ${expandedSection === "vendors" ? "rgba(232,168,124,0.40)" : "rgba(255,255,255,0.09)"}`,
-                      boxShadow: expandedSection === "vendors" ? "0 0 0 1px rgba(232,168,124,0.10), inset 0 1px 0 rgba(255,255,255,0.06)" : "inset 0 1px 0 rgba(255,255,255,0.04)",
-                      borderRadius: "16px",
-                      padding: "13px",
+                      backgroundColor: "#1C1828",
+                      boxShadow: expandedSection === "vendors" ? "0 0 0 2px rgba(232,168,124,0.5), 0 2px 12px rgba(0,0,0,0.45)" : "0 2px 12px rgba(0,0,0,0.45)",
+                      borderRadius: "22px",
+                      padding: "14px",
                       cursor: "pointer",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "space-between",
                       direction: "rtl",
-                      transition: "all 0.2s",
+                      transition: "box-shadow 0.2s",
                       textAlign: "right",
+                      border: "none",
                     }}
                   >
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -659,50 +597,39 @@ export default function Home() {
 
               {/* Budget Widget */}
               <div
-                className="col-span-2 rounded-2xl"
-                style={{
-                  background: "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
-                  border: "1px solid rgba(255,255,255,0.09)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                  padding: "16px",
-                }}
+                className="col-span-2 rounded-[22px]"
+                style={{ backgroundColor: "#1C1828", boxShadow: "0 2px 16px rgba(0,0,0,0.5)", padding: "16px" }}
               >
-                <p style={{ color: "#6B6478", fontSize: "10px", letterSpacing: "0.07em", textTransform: "uppercase", marginBottom: "14px" }}>
-                  תקציב
-                </p>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px" }}>
+                  <span style={{ color: "rgba(245,240,232,0.4)", fontSize: "12px", fontWeight: "500" }}>תקציב</span>
+                  {totalBudget > 0 && (
+                    <span style={{ color: "rgba(245,240,232,0.35)", fontSize: "12px" }}>
+                      ₪{totalBudget.toLocaleString()}
+                    </span>
+                  )}
+                </div>
                 {totalBudget > 0 ? (
                   <>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "8px", marginBottom: "16px" }}>
+                    <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
                       {[
-                        { label: "מתוכנן", value: totalBudget, color: "#F5F0E8", bg: "rgba(255,255,255,0.04)" },
-                        { label: "הוצאה",  value: totalSpent,  color: "#E8A87C", bg: "rgba(232,168,124,0.08)" },
-                        { label: "נותר",   value: remaining,   color: "#8FBC8F", bg: "rgba(143,188,143,0.08)" },
+                        { label: "הוצאה",  value: totalSpent,  color: "#E8A87C", bg: "rgba(232,168,124,0.10)" },
+                        { label: "נותר",   value: remaining,   color: "#8FBC8F", bg: "rgba(143,188,143,0.10)" },
                       ].map(({ label, value, color, bg }) => (
-                        <div key={label} style={{ backgroundColor: bg, borderRadius: "10px", padding: "10px 8px", textAlign: "center" }}>
-                          <p style={{ color: "#6B6478", fontSize: "10px", marginBottom: "5px" }}>{label}</p>
-                          <p style={{ color, fontSize: "15px", fontWeight: "700" }}>
-                            ₪{value >= 1000 ? `${Math.round(value / 1000)}K` : value}
+                        <div key={label} style={{ flex: 1, backgroundColor: bg, borderRadius: "14px", padding: "12px 14px" }}>
+                          <p style={{ color: "rgba(245,240,232,0.4)", fontSize: "11px", marginBottom: "4px" }}>{label}</p>
+                          <p style={{ color, fontSize: "20px", fontWeight: "700", letterSpacing: "-0.5px" }}>
+                            ₪{value >= 1000 ? `${Math.round(value / 1000)}K` : value.toLocaleString()}
                           </p>
                         </div>
                       ))}
                     </div>
-                    <div style={{ position: "relative" }}>
-                      <div className="rounded-full" style={{ height: "6px", backgroundColor: "rgba(255,255,255,0.06)" }}>
-                        <div
-                          className="rounded-full"
-                          style={{
-                            width: `${pct}%`, height: "100%",
-                            background: "linear-gradient(90deg, #E8A87C, #C96F42)",
-                            boxShadow: "0 0 8px rgba(232,168,124,0.45)",
-                            transition: "width 0.6s ease",
-                          }}
-                        />
-                      </div>
-                      <p style={{ color: "#6B6478", fontSize: "11px", marginTop: "7px" }}>{pct}% מהתקציב נוצל</p>
+                    <div className="rounded-full" style={{ height: "4px", backgroundColor: "rgba(255,255,255,0.08)" }}>
+                      <div className="rounded-full" style={{ width: `${pct}%`, height: "100%", backgroundColor: "#E8A87C", transition: "width 0.6s ease" }} />
                     </div>
+                    <p style={{ color: "rgba(245,240,232,0.25)", fontSize: "11px", marginTop: "6px" }}>{pct}% נוצל</p>
                   </>
                 ) : (
-                  <p style={{ color: "#6B6478", fontSize: "14px" }}>תקציב יוגדר בשיחה</p>
+                  <p style={{ color: "rgba(245,240,232,0.3)", fontSize: "14px" }}>תקציב יוגדר בשיחה</p>
                 )}
               </div>
             </div>
@@ -712,20 +639,18 @@ export default function Home() {
           <div
             className="sticky bottom-0"
             style={{
-              padding: "12px 16px 20px",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              background: "rgba(15, 10, 26, 0.8)",
-              borderTop: "1px solid rgba(255,255,255,0.08)",
+              padding: "10px 12px 28px",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              background: "rgba(16,12,28,0.85)",
             }}
           >
             <div
-              className="flex flex-row items-center rounded-full cursor-pointer"
+              className="flex flex-row items-center rounded-[18px] cursor-pointer"
               style={{
-                height: "54px",
-                background: "linear-gradient(135deg, #241B38 0%, #1E1630 100%)",
-                border: "1px solid rgba(232,168,124,0.18)",
-                boxShadow: "0 0 0 1px rgba(255,255,255,0.04), 0 4px 20px rgba(0,0,0,0.35)",
+                height: "52px",
+                backgroundColor: "#1C1828",
+                boxShadow: "0 2px 16px rgba(0,0,0,0.5)",
                 gap: "10px",
                 paddingLeft: "8px",
                 paddingRight: "8px",
@@ -733,31 +658,16 @@ export default function Home() {
               onClick={() => setChatOpen(true)}
             >
               <div style={{ position: "relative", flexShrink: 0 }}>
-                <div
-                  className="flex items-center justify-center rounded-full"
-                  style={{ width: "38px", height: "38px", backgroundColor: "#E8A87C" }}
-                >
-                  <Sparkles size={15} style={{ color: "#1A1428" }} />
+                <div className="flex items-center justify-center rounded-full" style={{ width: "36px", height: "36px", backgroundColor: "#E8A87C" }}>
+                  <Sparkles size={14} style={{ color: "#1A1428" }} />
                 </div>
-                <div style={{
-                  position: "absolute", bottom: "1px", right: "1px",
-                  width: "9px", height: "9px", borderRadius: "50%",
-                  backgroundColor: "#8FBC8F",
-                  border: "1.5px solid #1E1630",
-                }} />
+                <div style={{ position: "absolute", bottom: "0", right: "0", width: "9px", height: "9px", borderRadius: "50%", backgroundColor: "#8FBC8F", border: "1.5px solid #1C1828" }} />
               </div>
-              <span className="flex-1 text-sm" style={{ color: "#6B6478", paddingRight: "4px" }}>
+              <span className="flex-1 text-sm" style={{ color: "rgba(245,240,232,0.35)", letterSpacing: "-0.1px" }}>
                 שאל את הסוכן...
               </span>
-              <div
-                className="flex items-center justify-center rounded-full flex-shrink-0"
-                style={{
-                  width: "38px", height: "38px",
-                  background: "linear-gradient(135deg, #E8A87C, #C96F42)",
-                  boxShadow: "0 2px 10px rgba(232,168,124,0.3)",
-                }}
-              >
-                <ArrowUp size={16} style={{ color: "#1A1428" }} />
+              <div className="flex items-center justify-center rounded-[12px] flex-shrink-0" style={{ width: "36px", height: "36px", backgroundColor: "#E8A87C" }}>
+                <ArrowUp size={15} style={{ color: "#1A1428" }} />
               </div>
             </div>
           </div>
@@ -790,48 +700,29 @@ function VendorWidget({
   dimmed?: boolean;
   onClick?: () => void;
 }) {
-  const [hovered, setHovered] = useState(false);
   return (
     <div
-      className="flex flex-col justify-between rounded-2xl relative cursor-pointer overflow-hidden"
+      className="flex flex-col justify-between rounded-[22px] relative cursor-pointer"
       style={{
-        background: "linear-gradient(145deg, #1C1530 0%, #1A1428 100%)",
-        border: `1px solid ${hovered ? hoverBorderColor : borderColor}`,
-        boxShadow: hovered ? `0 0 0 1px ${hoverBorderColor}, inset 0 1px 0 rgba(255,255,255,0.06)` : "inset 0 1px 0 rgba(255,255,255,0.04)",
-        padding: "13px",
-        minHeight: "112px",
-        opacity: dimmed ? 0.5 : 1,
-        transition: "border-color 0.2s, box-shadow 0.2s",
+        backgroundColor: "#1C1828",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.45)",
+        padding: "14px",
+        aspectRatio: "1",
+        opacity: dimmed ? 0.45 : 1,
       }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
       onClick={onClick}
     >
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-        <div
-          className="flex items-center justify-center rounded-full"
-          style={{ width: "34px", height: "34px", backgroundColor: iconBg }}
-        >
+        <div className="flex items-center justify-center rounded-full" style={{ width: "36px", height: "36px", backgroundColor: iconBg }}>
           {icon}
         </div>
-        <span
-          className="font-semibold rounded-full"
-          style={{
-            backgroundColor: `${badgeColor}18`,
-            color: badgeColor,
-            fontSize: "10px",
-            padding: "3px 8px",
-            border: `1px solid ${badgeColor}30`,
-          }}
-        >
+        <span style={{ backgroundColor: `${badgeColor}1E`, color: badgeColor, fontSize: "10px", fontWeight: "600", padding: "3px 8px", borderRadius: "20px" }}>
           {badgeLabel}
         </span>
       </div>
-      <div className="flex flex-col" style={{ marginTop: "10px" }}>
-        <span className="font-semibold text-sm" style={{ color: "#F5F0E8", letterSpacing: "-0.01em" }}>
-          {name}
-        </span>
-        <span style={{ color: "#6B6478", fontSize: "11px", marginTop: "2px" }}>{sub}</span>
+      <div className="flex flex-col">
+        <span style={{ color: "#F5F0E8", fontSize: "14px", fontWeight: "600", letterSpacing: "-0.2px" }}>{name}</span>
+        <span style={{ color: "rgba(245,240,232,0.35)", fontSize: "11px", marginTop: "2px" }}>{sub}</span>
       </div>
     </div>
   );
