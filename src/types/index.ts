@@ -26,6 +26,7 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   cards?: string[];
+  datePicker?: 'single' | 'range';
 }
 
 export interface ChatMessage {

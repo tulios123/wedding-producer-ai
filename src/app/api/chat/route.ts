@@ -86,6 +86,16 @@ function buildSystemPrompt(profile: Profile, slots: Slot[], vendorContext?: Vend
 - טווח חודשים → "ספטמבר-אוקטובר ${nextYear}"
 - לעולם אל תנחש שנה ואל תשתמש בתאריך שעבר.
 
+## תג לוח שנה — DATE_PICKER
+
+כשאתה שואל את המשתמש על תאריך החתונה ועדיין אין תאריך מדויק, הוסף תג אחד בסוף התגובה (בשורה נפרדת אחרי הטקסט):
+- אם אתה מצפה לתאריך ספציפי: [DATE_PICKER:single]
+- אם אתה מצפה לטווח תאריכים: [DATE_PICKER:range]
+- אם כבר יש תאריך מדויק (YYYY-MM-DD) — אל תוסיף את התג.
+
+דוגמה: "מתי החתונה שלכם?"
+[DATE_PICKER:single]
+
 לעדכון סטטוס ספק:
 [UPDATE:{"type":"slot","slot":"SLOT_ID","status":"STATUS","vendor":"שם"}]
 
@@ -301,12 +311,16 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    const datePickerMatch = raw.match(/\[DATE_PICKER:(single|range)\]/);
+    const datePicker = datePickerMatch ? (datePickerMatch[1] as 'single' | 'range') : undefined;
+
     const cleanReply = raw
       .replace(/\s*\[UPDATE:[^\]]*\]/g, "")
       .replace(/\s*\[CARDS:\[.*?\]\]/g, "")
+      .replace(/\s*\[DATE_PICKER:[^\]]*\]/g, "")
       .trim();
 
-    return NextResponse.json({ reply: cleanReply, updates, cards });
+    return NextResponse.json({ reply: cleanReply, updates, cards, datePicker });
   } catch (err) {
     console.error("[chat] route error:", err);
     return NextResponse.json(

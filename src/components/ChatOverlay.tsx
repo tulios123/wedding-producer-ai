@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ArrowUp } from "lucide-react";
 import type { Profile, Slot, UpdateTag, Message } from "@/types";
 import { VendorCard } from "@/components/VendorCard";
+import { CalendarPicker } from "@/components/CalendarPicker";
 import vendorsData from "@/data/vendors.json";
 
 interface ChatOverlayProps {
@@ -83,6 +84,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       console.log("[chat] data.updates received:", data.updates);
       const assistantMsg: Message = { role: "assistant", content: data.reply };
       if (data.cards?.length) assistantMsg.cards = data.cards;
+      if (data.datePicker) assistantMsg.datePicker = data.datePicker;
       setMessages((prev) => [...prev, assistantMsg]);
       for (const update of (data.updates ?? [])) {
         if (update.type === "navigation") {
@@ -211,6 +213,14 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                           isFavorite={favorites.includes(id)}
                         />
                       ))}
+                    </div>
+                  )}
+                  {msg.datePicker && i === messages.length - 1 && (
+                    <div style={{ maxWidth: "84%", marginTop: "6px" }}>
+                      <CalendarPicker
+                        mode={msg.datePicker}
+                        onSelect={(val) => sendMessage(val)}
+                      />
                     </div>
                   )}
                 </div>
