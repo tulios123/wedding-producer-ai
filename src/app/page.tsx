@@ -274,7 +274,7 @@ export default function Home() {
             </div>
 
             {/* Widget Grid */}
-            <div className="grid grid-cols-2" style={{ gap: "8px", padding: "8px 12px 110px" }}>
+            <div className="grid grid-cols-2" style={{ gap: "8px", padding: "8px 12px 120px" }}>
 
               {/* Widget 1 – Hero */}
               <div
@@ -596,9 +596,11 @@ export default function Home() {
 
           {/* Chat Bar */}
           <div
-            className="sticky bottom-0"
+            className="sticky bottom-0 pb-safe-7"
             style={{
-              padding: "10px 12px 28px",
+              paddingTop: "10px",
+              paddingLeft: "12px",
+              paddingRight: "12px",
               backdropFilter: "blur(20px)",
               WebkitBackdropFilter: "blur(20px)",
               background: "rgba(251,246,242,0.92)",

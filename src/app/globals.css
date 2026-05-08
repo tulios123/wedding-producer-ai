@@ -111,6 +111,17 @@
   --sidebar-ring: #C97B8F;
 }
 
+/* Safe-area utilities for iPhone home bar */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+.pb-safe-4 { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+.pb-safe-6 { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+.pb-safe-7 { padding-bottom: max(28px, env(safe-area-inset-bottom)); }
+
+/* Prevent iOS input zoom — all inputs stay at 16px minimum */
+input, textarea, select {
+  font-size: max(16px, 1em);
+}
+
 @keyframes dotPulse {
   0%, 100% { opacity: 0.3; transform: scale(0.85); }
   50% { opacity: 1; transform: scale(1); }

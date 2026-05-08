@@ -145,12 +145,15 @@ export function VendorDetailSheet({ vendorId, isFavorite, onClose, onToggleFavor
           {/* Chat input bar */}
           {!hideChatRow && <form
             onSubmit={handleSend}
+            className="pb-safe-7"
             style={{
               flexShrink: 0,
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
-              padding: '10px 12px 28px',
+              paddingTop: '10px',
+              paddingLeft: '12px',
+              paddingRight: '12px',
               borderTop: '1px solid rgba(180,120,140,0.12)',
               backgroundColor: '#FBF6F2',
             }}

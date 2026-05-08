@@ -111,7 +111,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
           zIndex: 1,
           maxWidth: "600px",
           margin: "0 auto",
-          padding: "28vh 20px 80px",
+          padding: "28vh 20px max(80px, calc(60px + env(safe-area-inset-bottom)))",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",

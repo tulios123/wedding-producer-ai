@@ -290,9 +290,11 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
 
           {/* Input bar */}
           <div
-            className="flex-shrink-0"
+            className="flex-shrink-0 pb-safe-6"
             style={{
-              padding: "10px 12px 20px",
+              paddingTop: "10px",
+              paddingLeft: "12px",
+              paddingRight: "12px",
               borderTop: "1px solid rgba(180,120,140,0.12)",
             }}
           >
