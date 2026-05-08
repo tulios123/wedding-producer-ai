@@ -23,6 +23,7 @@ import ChatOverlay from "@/components/ChatOverlay";
 import WelcomeScreen from "@/components/WelcomeScreen";
 import { VendorCard } from "@/components/VendorCard";
 import { VendorDetailSheet } from "@/components/VendorDetailSheet";
+import { SlotVendorSheet } from "@/components/SlotVendorSheet";
 import { usePersistedState, clearAll } from "@/hooks/usePersistedState";
 import vendorsData from "@/data/vendors.json";
 import type { Slot, SlotId, Profile, UpdateTag, SlotStatus, Message } from "@/types";
@@ -110,25 +111,22 @@ export default function Home() {
   const [favorites, setFavorites] = usePersistedState<string[]>("favorites", []);
   const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
   const [expandedSection, setExpandedSection] = useState<"favorites" | "vendors" | null>(null);
-  const [expandedSlot, setExpandedSlot] = useState<SlotId | null>(null);
-  const [slotPanelInput, setSlotPanelInput] = useState("");
+  const [openSlotId, setOpenSlotId] = useState<SlotId | null>(null);
   const [chatInitialInput, setChatInitialInput] = useState("");
+  const [chatAutoSend, setChatAutoSend] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
 
   function toggleFavorite(id: string) {
     setFavorites((prev) => prev.includes(id) ? prev.filter((f) => f !== id) : [...prev, id]);
   }
 
-  function toggleExpandedSlot(id: SlotId) {
-    setExpandedSlot((prev) => (prev === id ? null : id));
-    setSlotPanelInput("");
-  }
-
-  function sendSlotMessage() {
-    if (!slotPanelInput.trim()) return;
-    setChatInitialInput(slotPanelInput.trim());
-    setSlotPanelInput("");
-    setExpandedSlot(null);
+  function handleSlotSend(text: string, slot: Slot) {
+    const ctx = slot.vendor
+      ? `לגבי ${slot.label} (${slot.vendor}): ${text}`
+      : `לגבי ${slot.label}: ${text}`;
+    setChatInitialInput(ctx);
+    setChatAutoSend(true);
+    setOpenSlotId(null);
     setChatOpen(true);
   }
 
@@ -174,9 +172,7 @@ export default function Home() {
 
   const venueSlot = slots.find((s) => s.id === "venue");
   const activeSlots = slots.filter((s) => s.id !== "venue");
-  const activeExpandedSlot = expandedSlot && expandedSlot !== "venue"
-    ? activeSlots.find((s) => s.id === expandedSlot) ?? null
-    : null;
+  const openSlot = openSlotId ? slots.find((s) => s.id === openSlotId) ?? null : null;
   const venueCfg = statusConfig[venueSlot?.status ?? "idle"];
 
   const dateDisplay = resolveDateDisplay(profile.weddingDate);
@@ -193,6 +189,18 @@ export default function Home() {
 
   return (
     <>
+      <SlotVendorSheet
+        slot={openSlot}
+        isFavorite={openSlot?.vendor
+          ? favorites.includes(
+              (vendorsData.vendors.find(v => v.name === openSlot.vendor)?.id ?? "")
+            )
+          : false}
+        onClose={() => setOpenSlotId(null)}
+        onToggleFavorite={toggleFavorite}
+        onSend={(text) => openSlot && handleSlotSend(text, openSlot)}
+      />
+
       <VendorDetailSheet
         vendorId={selectedVendorId}
         isFavorite={selectedVendorId ? favorites.includes(selectedVendorId) : false}
@@ -212,7 +220,8 @@ export default function Home() {
         favorites={favorites}
         onToggleFavorite={toggleFavorite}
         initialInput={chatInitialInput}
-        onInitialInputConsumed={() => setChatInitialInput("")}
+        autoSend={chatAutoSend}
+        onInitialInputConsumed={() => { setChatInitialInput(""); setChatAutoSend(false); }}
       />
 
       {/* Toast */}
@@ -381,136 +390,81 @@ export default function Home() {
                 )}
               </div>
 
-              {/* Widget 2 – Venue (dynamic, expandable) */}
-              <div className="col-span-2">
-                <div
-                  className="flex flex-row items-center rounded-2xl overflow-hidden relative cursor-pointer"
-                  style={{
-                    border: `1px solid ${expandedSlot === "venue" ? `${venueCfg.color}88` : `${venueCfg.color}4D`}`,
-                    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                    minHeight: "80px",
-                    padding: "14px",
-                    gap: "12px",
-                    transition: "border-color 0.2s",
-                    ...(venueSlot?.vendor
-                      ? {
-                          backgroundImage:
-                            "url(https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80)",
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                        }
-                      : { backgroundColor: "#1A1428" }),
-                  }}
-                  onClick={() => toggleExpandedSlot("venue")}
-                >
-                  {venueSlot?.vendor && (
-                    <div
-                      className="absolute inset-0"
-                      style={{
-                        background:
-                          "linear-gradient(to left, rgba(15,10,26,0.85) 0%, rgba(15,10,26,0.5) 100%)",
-                        pointerEvents: "none",
-                      }}
-                    />
-                  )}
+              {/* Widget 2 – Venue (dynamic) */}
+              <div
+                className="col-span-2 flex flex-row items-center rounded-2xl overflow-hidden relative cursor-pointer"
+                style={{
+                  border: `1px solid ${venueCfg.color}4D`,
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                  minHeight: "80px",
+                  padding: "14px",
+                  gap: "12px",
+                  ...(venueSlot?.vendor
+                    ? {
+                        backgroundImage:
+                          "url(https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80)",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                      }
+                    : { backgroundColor: "#1A1428" }),
+                }}
+                onClick={() => setOpenSlotId("venue")}
+              >
+                {venueSlot?.vendor && (
                   <div
-                    className="flex items-center justify-center rounded-xl flex-shrink-0 relative"
-                    style={{ width: "38px", height: "38px", backgroundColor: venueCfg.bg }}
-                  >
-                    <Building2 size={18} style={{ color: venueCfg.color }} />
-                  </div>
-                  <div className="flex flex-col flex-1 relative">
-                    <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "10px" }}>מקום</span>
-                    <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "15px" }}>
-                      {venueSlot?.vendor ?? "בוא נדבר על מקום"}
-                    </span>
-                  </div>
-                  <span
-                    className="font-semibold flex-shrink-0 rounded-full relative"
+                    className="absolute inset-0"
                     style={{
-                      backgroundColor: `${venueCfg.color}2E`,
-                      color: venueCfg.color,
-                      fontSize: "12px",
-                      padding: "4px 10px",
-                    }}
-                  >
-                    {venueSlot?.status === "signed" ? "✓✓ חתום" : venueCfg.label}
-                  </span>
-                  <ChevronDown
-                    size={14}
-                    className="relative flex-shrink-0"
-                    style={{
-                      color: venueCfg.color,
-                      transform: expandedSlot === "venue" ? "rotate(180deg)" : "rotate(0deg)",
-                      transition: "transform 0.25s",
+                      background:
+                        "linear-gradient(to left, rgba(15,10,26,0.85) 0%, rgba(15,10,26,0.5) 100%)",
+                      pointerEvents: "none",
                     }}
                   />
+                )}
+                <div
+                  className="flex items-center justify-center rounded-xl flex-shrink-0 relative"
+                  style={{ width: "38px", height: "38px", backgroundColor: venueCfg.bg }}
+                >
+                  <Building2 size={18} style={{ color: venueCfg.color }} />
                 </div>
-                <AnimatePresence>
-                  {expandedSlot === "venue" && venueSlot && (
-                    <motion.div
-                      key="venue-panel"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      <SlotExpandPanel
-                        slot={venueSlot}
-                        input={slotPanelInput}
-                        setInput={setSlotPanelInput}
-                        onSend={sendSlotMessage}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div className="flex flex-col flex-1 relative">
+                  <span style={{ color: "rgba(255,255,255,0.55)", fontSize: "10px" }}>מקום</span>
+                  <span className="font-semibold" style={{ color: "#F5F0E8", fontSize: "15px" }}>
+                    {venueSlot?.vendor ?? "בוא נדבר על מקום"}
+                  </span>
+                </div>
+                <span
+                  className="font-semibold flex-shrink-0 rounded-full relative"
+                  style={{
+                    backgroundColor: `${venueCfg.color}2E`,
+                    color: venueCfg.color,
+                    fontSize: "12px",
+                    padding: "4px 10px",
+                  }}
+                >
+                  {venueSlot?.status === "signed" ? "✓✓ חתום" : venueCfg.label}
+                </span>
               </div>
 
-              {/* Active slot widgets (photography + catering, expandable) */}
-              <div className="col-span-2">
-                <div className="flex gap-[10px]">
-                  {activeSlots.map((slot) => {
-                    const cfg = statusConfig[slot.status] ?? statusConfig.idle;
-                    const IconComp = SLOT_ICONS[slot.id];
-                    return (
-                      <div key={slot.id} style={{ flex: 1 }}>
-                        <VendorWidget
-                          name={slot.label}
-                          sub={slot.vendor ?? "בוא נדבר"}
-                          badgeLabel={cfg.label}
-                          badgeColor={cfg.color}
-                          borderColor={expandedSlot === slot.id ? `${cfg.color}66` : `${cfg.color}33`}
-                          hoverBorderColor={`${cfg.color}66`}
-                          icon={<IconComp size={16} style={{ color: cfg.color }} />}
-                          iconBg={cfg.bg}
-                          dimmed={slot.status === "idle" && !slot.vendor}
-                          onClick={() => toggleExpandedSlot(slot.id)}
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
-                <AnimatePresence>
-                  {activeExpandedSlot && (
-                    <motion.div
-                      key={activeExpandedSlot.id}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25, ease: "easeInOut" }}
-                      style={{ overflow: "hidden" }}
-                    >
-                      <SlotExpandPanel
-                        slot={activeExpandedSlot}
-                        input={slotPanelInput}
-                        setInput={setSlotPanelInput}
-                        onSend={sendSlotMessage}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+              {/* Active slot widgets (photography + catering) */}
+              {activeSlots.map((slot) => {
+                const cfg = statusConfig[slot.status] ?? statusConfig.idle;
+                const IconComp = SLOT_ICONS[slot.id];
+                return (
+                  <VendorWidget
+                    key={slot.id}
+                    name={slot.label}
+                    sub={slot.vendor ?? "בוא נדבר"}
+                    badgeLabel={cfg.label}
+                    badgeColor={cfg.color}
+                    borderColor={`${cfg.color}33`}
+                    hoverBorderColor={`${cfg.color}66`}
+                    icon={<IconComp size={16} style={{ color: cfg.color }} />}
+                    iconBg={cfg.bg}
+                    dimmed={slot.status === "idle" && !slot.vendor}
+                    onClick={() => setOpenSlotId(slot.id)}
+                  />
+                );
+              })}
 
               {/* Placeholder slots */}
               {PLACEHOLDER_SLOTS.map((p) => {
@@ -881,119 +835,6 @@ function BudgetCol({
       <span className="font-semibold" style={{ color: valueColor, fontSize: "15px" }}>
         {value}
       </span>
-    </div>
-  );
-}
-
-function SlotExpandPanel({
-  slot,
-  input,
-  setInput,
-  onSend,
-}: {
-  slot: Slot;
-  input: string;
-  setInput: (v: string) => void;
-  onSend: () => void;
-}) {
-  const cfg = statusConfig[slot.status] ?? statusConfig.idle;
-  return (
-    <div
-      style={{
-        marginTop: "8px",
-        backgroundColor: "#1A1428",
-        border: `1px solid ${cfg.color}40`,
-        borderRadius: "16px",
-        padding: "14px",
-        direction: "rtl",
-      }}
-    >
-      {/* Slot info */}
-      <div style={{ marginBottom: "12px" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
-          <span style={{ color: "#F5F0E8", fontSize: "14px", fontWeight: 600 }}>{slot.label}</span>
-          <span
-            style={{
-              backgroundColor: cfg.bg,
-              color: cfg.color,
-              fontSize: "10px",
-              padding: "2px 8px",
-              borderRadius: "20px",
-              fontWeight: 600,
-            }}
-          >
-            {cfg.label}
-          </span>
-        </div>
-        {slot.vendor ? (
-          <p style={{ color: "#B8B0A8", fontSize: "14px" }}>{slot.vendor}</p>
-        ) : (
-          <p style={{ color: "#6B6478", fontSize: "13px" }}>עדיין לא נבחר ספק</p>
-        )}
-        {slot.estimate && !slot.amount && (
-          <p style={{ color: "#7A7280", fontSize: "13px", marginTop: "4px" }}>
-            הערכה: ₪{slot.estimate.min.toLocaleString()} – ₪{slot.estimate.max.toLocaleString()}
-          </p>
-        )}
-        {slot.amount && (
-          <p style={{ color: "#8FBC8F", fontSize: "14px", fontWeight: 600, marginTop: "4px" }}>
-            סוגר: ₪{slot.amount.toLocaleString()}
-          </p>
-        )}
-      </div>
-
-      {/* Chat input row */}
-      <div
-        style={{
-          display: "flex",
-          gap: "8px",
-          alignItems: "center",
-          backgroundColor: "#0F0A1A",
-          borderRadius: "12px",
-          padding: "8px 10px",
-          border: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <input
-          autoFocus
-          style={{
-            flex: 1,
-            background: "transparent",
-            border: "none",
-            outline: "none",
-            color: "#F5F0E8",
-            fontSize: "14px",
-            direction: "rtl",
-            fontFamily: "inherit",
-          }}
-          placeholder={`שאל על ${slot.label}...`}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              onSend();
-            }
-          }}
-        />
-        <button
-          onClick={onSend}
-          style={{
-            width: "30px",
-            height: "30px",
-            borderRadius: "50%",
-            backgroundColor: "#E8A87C",
-            border: "none",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          <ArrowUp size={14} style={{ color: "#1A1428" }} />
-        </button>
-      </div>
     </div>
   );
 }

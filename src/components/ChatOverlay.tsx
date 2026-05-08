@@ -20,6 +20,7 @@ interface ChatOverlayProps {
   favorites?: string[];
   onToggleFavorite?: (id: string) => void;
   initialInput?: string;
+  autoSend?: boolean;
   onInitialInputConsumed?: () => void;
 }
 
@@ -30,7 +31,7 @@ function renderMessage(content: string): string {
     .replace(/\n/g, "<br/>");
 }
 
-export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, initialInput, onInitialInputConsumed }: ChatOverlayProps) {
+export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, messages, setMessages, profile, slots, mode = 'overlay', favorites = [], onToggleFavorite, initialInput, autoSend, onInitialInputConsumed }: ChatOverlayProps) {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -46,9 +47,13 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
 
   useEffect(() => {
     if (isOpen && initialInput) {
-      setInputValue(initialInput);
+      if (autoSend) {
+        sendMessage(initialInput);
+      } else {
+        setInputValue(initialInput);
+        setTimeout(() => inputRef.current?.focus(), 50);
+      }
       onInitialInputConsumed?.();
-      setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen, initialInput]);
 
