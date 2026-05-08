@@ -279,10 +279,7 @@ export default function WelcomeScreen({ messages, setMessages, onUpdate, onNavig
                   )}
                   {msg.datePicker && i === messages.length - 1 && (
                     <div style={{ marginTop: "8px", maxWidth: "360px" }}>
-                      <CalendarPicker
-                        mode={msg.datePicker}
-                        onSelect={(val) => sendMessage(val)}
-                      />
+                      <CalendarPicker onSelect={(val) => sendMessage(val)} />
                     </div>
                   )}
                 </div>

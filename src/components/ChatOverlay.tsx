@@ -217,10 +217,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
                   )}
                   {msg.datePicker && i === messages.length - 1 && (
                     <div style={{ maxWidth: "84%", marginTop: "6px" }}>
-                      <CalendarPicker
-                        mode={msg.datePicker}
-                        onSelect={(val) => sendMessage(val)}
-                      />
+                      <CalendarPicker onSelect={(val) => sendMessage(val)} />
                     </div>
                   )}
                 </div>
