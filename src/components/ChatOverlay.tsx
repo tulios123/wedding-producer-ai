@@ -37,6 +37,8 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const autoSendRef = useRef(autoSend);
+  autoSendRef.current = autoSend;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -48,7 +50,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
 
   useEffect(() => {
     if (isOpen && initialInput) {
-      if (autoSend) {
+      if (autoSendRef.current) {
         sendMessage(initialInput);
       } else {
         setInputValue(initialInput);
@@ -56,7 +58,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       }
       onInitialInputConsumed?.();
     }
-  }, [isOpen, initialInput]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [isOpen, initialInput]); // autoSend intentionally read via ref
 
   async function sendMessage(overrideText?: string) {
     const text = (overrideText ?? inputValue).trim();
