@@ -205,7 +205,17 @@ export default function Home() {
         isFavorite={selectedVendorId ? favorites.includes(selectedVendorId) : false}
         onClose={() => setSelectedVendorId(null)}
         onToggleFavorite={() => selectedVendorId && toggleFavorite(selectedVendorId)}
-        onAskAgent={() => { setSelectedVendorId(null); setChatOpen(true); }}
+        onAskAgent={() => {
+          if (selectedVendorId) {
+            const v = vendorsData.vendors.find((v) => v.id === selectedVendorId);
+            if (v) {
+              const CAT: Record<string, string> = { venue: "מקום", catering: "קייטרינג", photography: "צילום" };
+              setChatVendorContext({ slotLabel: CAT[v.category] ?? v.category, vendorName: v.name });
+            }
+          }
+          setSelectedVendorId(null);
+          setChatOpen(true);
+        }}
       />
 
       <ChatOverlay

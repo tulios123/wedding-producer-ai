@@ -56,7 +56,7 @@ export default function ChatOverlay({ isOpen, onClose, onUpdate, onNavigate, mes
       }
       onInitialInputConsumed?.();
     }
-  }, [isOpen, initialInput]);
+  }, [isOpen, initialInput, autoSend]);
 
   async function sendMessage(overrideText?: string) {
     const text = (overrideText ?? inputValue).trim();
