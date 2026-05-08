@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Building2,
   Camera,
@@ -14,6 +14,9 @@ import {
   Sparkles,
   ArrowUp,
   RotateCcw,
+  ChevronDown,
+  Heart,
+  Store,
   LucideIcon,
 } from "lucide-react";
 import ChatOverlay from "@/components/ChatOverlay";
@@ -106,6 +109,7 @@ export default function Home() {
   const [slots, setSlots] = usePersistedState<Slot[]>("slots", INITIAL_SLOTS);
   const [favorites, setFavorites] = usePersistedState<string[]>("favorites", []);
   const [selectedVendorId, setSelectedVendorId] = useState<string | null>(null);
+  const [expandedSection, setExpandedSection] = useState<"favorites" | "vendors" | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   function toggleFavorite(id: string) {
@@ -452,76 +456,165 @@ export default function Home() {
                 );
               })}
 
-              {/* Favorites Widget — always visible */}
-              <div
-                className="col-span-2 rounded-2xl"
-                style={{
-                  backgroundColor: "#1A1428",
-                  border: "1px solid rgba(255,255,255,0.11)",
-                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                  padding: "14px",
-                }}
-              >
-                <p
-                  className="font-medium"
-                  style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
-                >
-                  ספקים שמורים
-                </p>
-                {favorites.length === 0 ? (
-                  <p style={{ color: "#6B6478", fontSize: "13px", textAlign: "center", padding: "10px 0" }}>
-                    לחצו על ❤️ בכרטיס ספק כדי לשמור אותו כאן
-                  </p>
-                ) : (
-                  <div className="flex flex-col" style={{ gap: "8px" }}>
-                    {favorites.map((id) => (
-                      <VendorCard
-                        key={id}
-                        vendorId={id}
-                        onTap={() => setSelectedVendorId(id)}
-                        onHeartClick={() => toggleFavorite(id)}
-                        isFavorite={true}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Vendors Catalog */}
-              {(["venue", "catering", "photography"] as const).map((cat) => {
-                const catLabel = cat === "venue" ? "מקומות" : cat === "catering" ? "קייטרינג" : "צילום";
-                const catVendors = vendorsData.vendors.filter((v) => v.category === cat);
-                return (
-                  <div
-                    key={cat}
-                    className="col-span-2 rounded-2xl"
+              {/* Expandable Favorites + Vendors Widgets */}
+              <div className="col-span-2">
+                {/* Two compact squares */}
+                <div className="flex gap-[10px]">
+                  {/* Favorites square */}
+                  <button
+                    onClick={() => setExpandedSection((p) => (p === "favorites" ? null : "favorites"))}
                     style={{
+                      flex: 1,
+                      aspectRatio: "1",
                       backgroundColor: "#1A1428",
-                      border: "1px solid rgba(255,255,255,0.11)",
+                      border: `1px solid ${expandedSection === "favorites" ? "rgba(232,168,124,0.45)" : "rgba(255,255,255,0.11)"}`,
                       boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
-                      padding: "14px",
+                      borderRadius: "16px",
+                      padding: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      direction: "rtl",
+                      transition: "border-color 0.2s",
+                      textAlign: "right",
                     }}
                   >
-                    <p
-                      className="font-medium"
-                      style={{ color: "#7A7280", fontSize: "11px", marginBottom: "12px" }}
-                    >
-                      {catLabel}
-                    </p>
-                    <div className="flex flex-col" style={{ gap: "8px" }}>
-                      {catVendors.map((v) => (
-                        <VendorCard
-                          key={v.id}
-                          vendorId={v.id}
-                          onTap={() => setSelectedVendorId(v.id)}
-                          onHeartClick={() => toggleFavorite(v.id)}
-                          isFavorite={favorites.includes(v.id)}
-                        />
-                      ))}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <span style={{ color: "#7A7280", fontSize: "11px", fontWeight: 600 }}>שמורים</span>
+                      <Heart
+                        size={14}
+                        fill={favorites.length > 0 ? "currentColor" : "none"}
+                        style={{ color: expandedSection === "favorites" ? "#E8A87C" : favorites.length > 0 ? "#E8A87C" : "#7A7280" }}
+                      />
                     </div>
-                  </div>
-                );
-              })}
+                    <div>
+                      <span style={{ color: "#F5F0E8", fontSize: "30px", fontWeight: "700", lineHeight: 1, display: "block" }}>
+                        {favorites.length}
+                      </span>
+                      <span style={{ color: "#7A7280", fontSize: "12px" }}>ספקים שמורים</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <ChevronDown
+                        size={14}
+                        style={{
+                          color: "#7A7280",
+                          transform: expandedSection === "favorites" ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.25s",
+                        }}
+                      />
+                    </div>
+                  </button>
+
+                  {/* Vendors square */}
+                  <button
+                    onClick={() => setExpandedSection((p) => (p === "vendors" ? null : "vendors"))}
+                    style={{
+                      flex: 1,
+                      aspectRatio: "1",
+                      backgroundColor: "#1A1428",
+                      border: `1px solid ${expandedSection === "vendors" ? "rgba(232,168,124,0.45)" : "rgba(255,255,255,0.11)"}`,
+                      boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                      borderRadius: "16px",
+                      padding: "13px",
+                      cursor: "pointer",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "space-between",
+                      direction: "rtl",
+                      transition: "border-color 0.2s",
+                      textAlign: "right",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                      <span style={{ color: "#7A7280", fontSize: "11px", fontWeight: 600 }}>ספקים</span>
+                      <Store size={14} style={{ color: expandedSection === "vendors" ? "#E8A87C" : "#7A7280" }} />
+                    </div>
+                    <div>
+                      <span style={{ color: "#F5F0E8", fontSize: "30px", fontWeight: "700", lineHeight: 1, display: "block" }}>
+                        {vendorsData.vendors.length}
+                      </span>
+                      <span style={{ color: "#7A7280", fontSize: "12px" }}>ספקים זמינים</span>
+                    </div>
+                    <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <ChevronDown
+                        size={14}
+                        style={{
+                          color: "#7A7280",
+                          transform: expandedSection === "vendors" ? "rotate(180deg)" : "rotate(0deg)",
+                          transition: "transform 0.25s",
+                        }}
+                      />
+                    </div>
+                  </button>
+                </div>
+
+                {/* Expanded panels */}
+                <AnimatePresence>
+                  {expandedSection === "favorites" && (
+                    <motion.div
+                      key="favorites-panel"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div style={{ paddingTop: "10px", display: "flex", flexDirection: "column", gap: "8px" }}>
+                        {favorites.length === 0 ? (
+                          <div style={{ padding: "20px 16px", backgroundColor: "#1A1428", borderRadius: "16px", border: "1px solid rgba(255,255,255,0.11)", textAlign: "center" }}>
+                            <p style={{ color: "#6B6478", fontSize: "13px" }}>לחצו על ❤️ בכרטיס ספק כדי לשמור אותו כאן</p>
+                          </div>
+                        ) : (
+                          favorites.map((id) => (
+                            <VendorCard
+                              key={id}
+                              vendorId={id}
+                              onTap={() => setSelectedVendorId(id)}
+                              onHeartClick={() => toggleFavorite(id)}
+                              isFavorite={true}
+                            />
+                          ))
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {expandedSection === "vendors" && (
+                    <motion.div
+                      key="vendors-panel"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25, ease: "easeInOut" }}
+                      style={{ overflow: "hidden" }}
+                    >
+                      <div style={{ paddingTop: "10px", display: "flex", flexDirection: "column", gap: "16px" }}>
+                        {(["venue", "catering", "photography"] as const).map((cat) => {
+                          const catLabel = cat === "venue" ? "מקומות" : cat === "catering" ? "קייטרינג" : "צילום";
+                          const catVendors = vendorsData.vendors.filter((v) => v.category === cat);
+                          return (
+                            <div key={cat}>
+                              <p style={{ color: "#7A7280", fontSize: "11px", marginBottom: "8px" }}>{catLabel}</p>
+                              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                                {catVendors.map((v) => (
+                                  <VendorCard
+                                    key={v.id}
+                                    vendorId={v.id}
+                                    onTap={() => setSelectedVendorId(v.id)}
+                                    onHeartClick={() => toggleFavorite(v.id)}
+                                    isFavorite={favorites.includes(v.id)}
+                                  />
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
 
               {/* Budget Widget */}
               <div
